@@ -44,25 +44,52 @@ export async function deleteWorkshop(id) {
   return deleteDoc(doc(db, COL, id))
 }
 
+const DEFAULT_WORKSHOP = {
+  id: 'excel-analytics',
+  name: 'Excel for Data Analytics',
+  code: 'EXCEL',
+  description: 'Master data analysis, cleaning, advanced formulas, and dashboards in Excel.',
+  durationDays: 6,
+  isActive: true,
+}
+
 export async function getWorkshop(id) {
   if (!id) return null
-  const snap = await getDoc(doc(db, COL, id))
-  return snap.exists() ? { id: snap.id, ...snap.data() } : null
+  if (id === 'excel-analytics') return DEFAULT_WORKSHOP
+  try {
+    const snap = await getDoc(doc(db, COL, id))
+    return snap.exists() ? { id: snap.id, ...snap.data() } : null
+  } catch (err) {
+    console.warn('Could not fetch workshop doc:', err)
+    return null
+  }
 }
 
 export async function getAllWorkshops() {
-  const snap = await getDocs(collection(db, COL))
-  return snap.docs
-    .map((d) => ({ id: d.id, ...d.data() }))
-    .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
+  try {
+    const snap = await getDocs(collection(db, COL))
+    const list = snap.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
+    return list.length > 0 ? list : [DEFAULT_WORKSHOP]
+  } catch (err) {
+    console.warn('Could not fetch workshops (check Firestore rules):', err)
+    return [DEFAULT_WORKSHOP]
+  }
 }
 
 export async function getActiveWorkshops() {
-  const q = query(collection(db, COL), where('isActive', '==', true))
-  const snap = await getDocs(q)
-  return snap.docs
-    .map((d) => ({ id: d.id, ...d.data() }))
-    .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
+  try {
+    const q = query(collection(db, COL), where('isActive', '==', true))
+    const snap = await getDocs(q)
+    const list = snap.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
+    return list.length > 0 ? list : [DEFAULT_WORKSHOP]
+  } catch (err) {
+    console.warn('Could not fetch active workshops (check Firestore rules):', err)
+    return [DEFAULT_WORKSHOP]
+  }
 }
 
 export const getWorkshops = getAllWorkshops
@@ -70,24 +97,30 @@ export const getWorkshops = getAllWorkshops
 // Ensures default workshops exist so existing tests/questions map seamlessly.
 export async function ensureDefaultWorkshops() {
   const all = await getAllWorkshops()
-  if (all.length > 0) return all
+  // If we already have stored workshops with a non-fallback id, return them
+  if (all.length > 0 && all[0].id !== 'excel-analytics') return all
 
-  // Seed default "Excel for Data Analytics" workshop
-  const ref = await addDoc(collection(db, COL), {
-    name: 'Excel for Data Analytics',
-    code: 'EXCEL',
-    description: 'Master data analysis, cleaning, advanced formulas, and dashboards in Excel.',
-    durationDays: 6,
-    isActive: true,
-    createdAt: serverTimestamp(),
-  })
+  try {
+    // Seed default "Excel for Data Analytics" workshop
+    const ref = await addDoc(collection(db, COL), {
+      name: 'Excel for Data Analytics',
+      code: 'EXCEL',
+      description: 'Master data analysis, cleaning, advanced formulas, and dashboards in Excel.',
+      durationDays: 6,
+      isActive: true,
+      createdAt: serverTimestamp(),
+    })
 
-  return [{
-    id: ref.id,
-    name: 'Excel for Data Analytics',
-    code: 'EXCEL',
-    description: 'Master data analysis, cleaning, advanced formulas, and dashboards in Excel.',
-    durationDays: 6,
-    isActive: true,
-  }]
+    return [{
+      id: ref.id,
+      name: 'Excel for Data Analytics',
+      code: 'EXCEL',
+      description: 'Master data analysis, cleaning, advanced formulas, and dashboards in Excel.',
+      durationDays: 6,
+      isActive: true,
+    }]
+  } catch (err) {
+    console.warn('Could not seed default workshop to Firestore (requires admin permission):', err)
+    return [DEFAULT_WORKSHOP]
+  }
 }

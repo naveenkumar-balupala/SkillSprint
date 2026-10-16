@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { registerStudent } from '../../services/studentService'
 import { getAllBatches } from '../../services/batchService'
-import { getActiveWorkshops, ensureDefaultWorkshops } from '../../services/workshopService'
+import { getActiveWorkshops } from '../../services/workshopService'
 import { getSettings } from '../../services/settingsService'
 import Alert from '../../components/Alert'
 import Loader from '../../components/Loader'
@@ -39,11 +39,7 @@ export default function Register() {
       .catch(() => setBatches([]))
 
     getActiveWorkshops()
-      .then(async (w) => {
-        let list = w
-        if (list.length === 0) {
-          list = await ensureDefaultWorkshops()
-        }
+      .then((list) => {
         setWorkshops(list)
         if (list.length > 0) {
           setForm((prev) => ({
