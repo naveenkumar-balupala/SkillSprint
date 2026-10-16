@@ -34,6 +34,7 @@ export default function Profile() {
         {field('Branch', profile?.branch)}
         {field('Section', profile?.section)}
         {field('Batch', profile?.batch)}
+        {field('Enrolled Workshop', profile?.workshopName || 'Excel for Data Analytics')}
       </div>
 
       <h2 className="mb-3 mt-8 text-lg font-semibold text-slate-800">Test History</h2>
@@ -55,7 +56,14 @@ export default function Profile() {
             <tbody>
               {attempts.map((a) => (
                 <tr key={a.id} className="border-t border-slate-100">
-                  <td className="py-2">{a.testTitle}</td>
+                  <td className="py-2">
+                    <div className="font-medium text-slate-800">{a.testTitle}</div>
+                    {a.workshopName && (
+                      <span className="badge bg-slate-100 text-slate-600 text-xs mt-0.5">
+                        {a.workshopName}
+                      </span>
+                    )}
+                  </td>
                   <td>{a.score}</td>
                   <td>{a.percentage}%</td>
                   <td>

@@ -1,20 +1,27 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { deleteTest, getAllTests, updateTest, setResultsReleased } from '../../services/testService'
 import { getAllAttempts } from '../../services/attemptService'
+import { getAllWorkshops } from '../../services/workshopService'
 import Loader from '../../components/Loader'
 import ConfirmModal from '../../components/ConfirmModal'
 
 export default function ManageTests() {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const initialWorkshop = searchParams.get('workshopId') || 'All'
+
   const [tests, setTests] = useState([])
   const [attempts, setAttempts] = useState([])
+  const [workshops, setWorkshops] = useState([])
+  const [fWorkshop, setFWorkshop] = useState(initialWorkshop)
   const [loading, setLoading] = useState(true)
   const [deleteId, setDeleteId] = useState(null)
 
   const load = async () => {
-    const [t, a] = await Promise.all([getAllTests(), getAllAttempts()])
+    const [t, a, w] = await Promise.all([getAllTests(), getAllAttempts(), getAllWorkshops()])
     setTests(t)
     setAttempts(a)
+    setWorkshops(w)
     setLoading(false)
   }
   useEffect(() => { load() }, [])
@@ -25,7 +32,12 @@ export default function ManageTests() {
     return map
   }, [attempts])
 
-  // Show tests in the natural sequence: Pre-Assessment, Day 1..N, Grand Test.
+  const filteredTests = useMemo(() => {
+    if (fWorkshop === 'All') return tests
+    return tests.filter((t) => t.workshopId === fWorkshop || (!t.workshopId && fWorkshop === 'legacy'))
+  }, [tests, fWorkshop])
+
+  // Show tests in natural sequence: Pre-Assessment, Day 1..N, Grand Test.
   const sortedTests = useMemo(() => {
     const key = (t) => {
       if (t.testType === 'Pre-Assessment') return 0
@@ -33,8 +45,8 @@ export default function ManageTests() {
       if (t.testType === 'Day-wise Test') return 100 + (t.dayNumber || 0)
       return 5000
     }
-    return [...tests].sort((a, b) => key(a) - key(b))
-  }, [tests])
+    return [...filteredTests].sort((a, b) => key(a) - key(b))
+  }, [filteredTests])
 
   const toggleActive = async (test) => {
     await updateTest(test.id, { isActive: !test.isActive })
@@ -52,27 +64,76 @@ export default function ManageTests() {
     load()
   }
 
+  const handleWorkshopChange = (val) => {
+    setFWorkshop(val)
+    if (val === 'All') {
+      searchParams.delete('workshopId')
+      setSearchParams(searchParams)
+    } else {
+      setSearchParams({ workshopId: val })
+    }
+  }
+
   if (loading) return <Loader />
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-800">Manage Tests ({tests.length})</h1>
-        <Link to="/admin/create-test" className="btn-primary">+ Create Test</Link>
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-800">Manage Tests ({filteredTests.length})</h1>
+          <p className="mt-1 text-xs text-slate-500">
+            Activate, hide results, or manage test schedules across workshops.
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-semibold text-slate-500">Workshop</label>
+            <select
+              className="input text-xs py-1.5"
+              value={fWorkshop}
+              onChange={(e) => handleWorkshopChange(e.target.value)}
+            >
+              <option value="All">All Workshops</option>
+              {workshops.map((w) => (
+                <option key={w.id} value={w.id}>{w.name}</option>
+              ))}
+            </select>
+          </div>
+          <Link
+            to={fWorkshop !== 'All' ? `/admin/create-test?workshopId=${fWorkshop}` : '/admin/create-test'}
+            className="btn-primary"
+          >
+            + Create Test
+          </Link>
+        </div>
       </div>
 
       <p className="mb-2 text-xs text-slate-400 sm:hidden">Swipe the table sideways to see more columns →</p>
       <div className="card overflow-x-auto">
-        <table className="w-full min-w-[820px] text-sm">
+        <table className="w-full min-w-[880px] text-sm">
           <thead>
             <tr className="text-left text-slate-500">
-              <th className="py-2">Title</th><th>Type</th><th>Day</th><th>Qs</th><th>Duration</th><th>Attempts</th><th>Status</th><th>Results</th><th>Actions</th>
+              <th className="py-2">Title</th>
+              <th>Workshop</th>
+              <th>Type</th>
+              <th>Day</th>
+              <th>Qs</th>
+              <th>Duration</th>
+              <th>Attempts</th>
+              <th>Status</th>
+              <th>Results</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {sortedTests.map((t) => (
               <tr key={t.id} className="border-t border-slate-100">
                 <td className="py-2 font-medium">{t.testTitle}</td>
+                <td>
+                  <span className="badge bg-slate-100 text-slate-700">
+                    {t.workshopName || 'Excel for Data Analytics'}
+                  </span>
+                </td>
                 <td>{t.testType}</td>
                 <td>{t.dayNumber || '—'}</td>
                 <td>{t.totalQuestions}</td>
@@ -104,8 +165,12 @@ export default function ManageTests() {
                 </td>
               </tr>
             ))}
-            {tests.length === 0 && (
-              <tr><td colSpan={9} className="py-6 text-center text-slate-400">No tests yet. Create one to get started.</td></tr>
+            {sortedTests.length === 0 && (
+              <tr>
+                <td colSpan={10} className="py-6 text-center text-slate-400">
+                  No tests found for this workshop. Click "+ Create Test" to add one.
+                </td>
+              </tr>
             )}
           </tbody>
         </table>

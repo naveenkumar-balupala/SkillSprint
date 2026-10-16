@@ -12,6 +12,7 @@ export default function ViewResults() {
   const [msg, setMsg] = useState({ type: '', text: '' })
 
   const [search, setSearch] = useState('')
+  const [workshop, setWorkshop] = useState('All')
   const [testType, setTestType] = useState('All')
   const [branch, setBranch] = useState('All')
   const [section, setSection] = useState('All')
@@ -22,7 +23,7 @@ export default function ViewResults() {
   const load = () => {
     setLoading(true)
     Promise.all([getAllAttempts(), getAllStudents()]).then(([a, students]) => {
-      // Overlay each attempt with the student's current branch/section/batch.
+      // Overlay each attempt with the student's current branch/section/batch/workshop.
       const byId = {}
       students.forEach((s) => (byId[s.id] = s))
       const enriched = a
@@ -30,8 +31,19 @@ export default function ViewResults() {
         .map((att) => {
           const s = byId[att.studentId]
           return s
-            ? { ...att, studentName: s.name ?? att.studentName, usn: s.usn ?? att.usn, branch: s.branch ?? att.branch, section: s.section ?? att.section, batch: s.batch ?? att.batch ?? null }
-            : att
+            ? {
+                ...att,
+                studentName: s.name ?? att.studentName,
+                usn: s.usn ?? att.usn,
+                branch: s.branch ?? att.branch,
+                section: s.section ?? att.section,
+                batch: s.batch ?? att.batch ?? null,
+                workshopName: att.workshopName || s.workshopName || 'Excel for Data Analytics',
+              }
+            : {
+                ...att,
+                workshopName: att.workshopName || 'Excel for Data Analytics',
+              }
         })
       setAttempts(enriched)
       setLoading(false)
@@ -53,6 +65,7 @@ export default function ViewResults() {
     }
   }
 
+  const workshops = ['All', ...new Set(attempts.map((a) => a.workshopName).filter(Boolean))]
   const testTypes = ['All', ...new Set(attempts.map((a) => a.testType).filter(Boolean))]
   const branches = ['All', ...new Set(attempts.map((a) => a.branch).filter(Boolean))]
   const sections = ['All', ...new Set(attempts.map((a) => a.section).filter(Boolean))]
@@ -61,6 +74,7 @@ export default function ViewResults() {
   const filtered = useMemo(() => attempts.filter((a) => {
     const q = search.toLowerCase()
     const matchSearch = !q || a.studentName?.toLowerCase().includes(q) || a.usn?.toLowerCase().includes(q)
+    const matchWorkshop = workshop === 'All' || a.workshopName === workshop
     const matchType = testType === 'All' || a.testType === testType
     const matchBranch = branch === 'All' || a.branch === branch
     const matchSection = section === 'All' || a.section === section
@@ -68,11 +82,12 @@ export default function ViewResults() {
     const p = a.percentage ?? 0
     const matchMin = minScore === '' || p >= Number(minScore)
     const matchMax = maxScore === '' || p <= Number(maxScore)
-    return matchSearch && matchType && matchBranch && matchSection && matchBatch && matchMin && matchMax
-  }), [attempts, search, testType, branch, section, batch, minScore, maxScore])
+    return matchSearch && matchWorkshop && matchType && matchBranch && matchSection && matchBatch && matchMin && matchMax
+  }), [attempts, search, workshop, testType, branch, section, batch, minScore, maxScore])
 
   const rows = filtered.map((a) => ({
-    Name: a.studentName, USN: a.usn, Branch: a.branch, Section: a.section, Batch: a.batch || '',
+    Name: a.studentName, USN: a.usn, Workshop: a.workshopName || 'Excel for Data Analytics',
+    Branch: a.branch, Section: a.section, Batch: a.batch || '',
     Test: a.testTitle, Type: a.testType, Score: a.score, Percentage: a.percentage, Status: a.status,
   }))
 
@@ -94,10 +109,16 @@ export default function ViewResults() {
 
       {msg.text && <div className="mb-4"><Alert type={msg.type} onClose={() => setMsg({ type: '', text: '' })} autoCloseMs={msg.type === 'error' ? undefined : 5000}>{msg.text}</Alert></div>}
 
-      <div className="card mb-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7">
+      <div className="card mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
         <div>
           <label className="label">Search</label>
           <input className="input" placeholder="Name / USN" value={search} onChange={(e) => setSearch(e.target.value)} />
+        </div>
+        <div>
+          <label className="label">Workshop</label>
+          <select className="input" value={workshop} onChange={(e) => setWorkshop(e.target.value)}>
+            {workshops.map((w) => <option key={w}>{w}</option>)}
+          </select>
         </div>
         <div>
           <label className="label">Test Type</label>
@@ -135,10 +156,10 @@ export default function ViewResults() {
 
       <p className="mb-2 text-xs text-slate-400 sm:hidden">Swipe the table sideways to see more columns →</p>
       <div className="card overflow-x-auto">
-        <table className="w-full min-w-[720px] text-sm">
+        <table className="w-full min-w-[850px] text-sm">
           <thead>
             <tr className="text-left text-slate-500">
-              <th className="py-2">Name</th><th>USN</th><th>Branch</th><th>Sec</th><th>Batch</th><th>Test</th><th>Score</th><th>%</th><th>Status</th>
+              <th className="py-2">Name</th><th>USN</th><th>Workshop</th><th>Branch</th><th>Sec</th><th>Batch</th><th>Test</th><th>Score</th><th>%</th><th>Status</th>
             </tr>
           </thead>
           <tbody>
@@ -146,6 +167,11 @@ export default function ViewResults() {
               <tr key={a.id} className="border-t border-slate-100">
                 <td className="py-2 font-medium">{a.studentName}</td>
                 <td>{a.usn}</td>
+                <td>
+                  <span className="badge bg-slate-100 text-slate-700">
+                    {a.workshopName || 'Excel for Data Analytics'}
+                  </span>
+                </td>
                 <td>{a.branch}</td>
                 <td>{a.section}</td>
                 <td>{a.batch || '—'}</td>
@@ -160,7 +186,7 @@ export default function ViewResults() {
               </tr>
             ))}
             {filtered.length === 0 && (
-              <tr><td colSpan={9} className="py-6 text-center text-slate-400">No results match these filters. Try clearing the search or filters above.</td></tr>
+              <tr><td colSpan={10} className="py-6 text-center text-slate-400">No results match these filters. Try clearing the search or filters above.</td></tr>
             )}
           </tbody>
         </table>

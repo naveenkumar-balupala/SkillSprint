@@ -42,7 +42,7 @@ export default function TestPage() {
           navigate(`/result/${testId}`, { replace: true })
           return
         }
-        const pool = await getQuestionsForTest(t.testType, t.dayNumber)
+        const pool = await getQuestionsForTest(t.testType, t.dayNumber, t.workshopId)
         if (pool.length === 0) throw new Error('No questions available for this test yet.')
         const poolById = Object.fromEntries(pool.map((q) => [q.id, q]))
 

@@ -42,6 +42,8 @@ export async function submitAttempt({ student, test, questions, answers, result,
     branch: student.branch,
     section: student.section,
     batch: student.batch ?? null,
+    workshopId: test.workshopId || student.workshopId || null,
+    workshopName: test.workshopName || student.workshopName || null,
     testId: test.id,
     testTitle: test.testTitle,
     testType: test.testType,
@@ -92,12 +94,24 @@ export async function getStudentAttempts(studentId) {
 }
 
 // Everything — used by the admin dashboard/statistics.
-export async function getAllAttempts() {
-  const snap = await getDocs(collection(db, 'attempts'))
+export async function getAllAttempts(workshopId = null) {
+  let q
+  if (workshopId && workshopId !== 'All') {
+    q = query(collection(db, 'attempts'), where('workshopId', '==', workshopId))
+  } else {
+    q = collection(db, 'attempts')
+  }
+  const snap = await getDocs(q)
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }))
 }
 
-export async function getAllResults() {
-  const snap = await getDocs(collection(db, 'results'))
+export async function getAllResults(workshopId = null) {
+  let q
+  if (workshopId && workshopId !== 'All') {
+    q = query(collection(db, 'results'), where('workshopId', '==', workshopId))
+  } else {
+    q = collection(db, 'results')
+  }
+  const snap = await getDocs(q)
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }))
 }

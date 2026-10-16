@@ -13,6 +13,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [batch, setBatch] = useState('All')
+  const [workshop, setWorkshop] = useState('All')
 
   useEffect(() => {
     buildDashboard()
@@ -24,15 +25,33 @@ export default function AdminDashboard() {
   if (loading) return <Loader message="Building dashboard…" />
   if (error) return <Alert type="error">{error}</Alert>
 
-  // Batch filter: recompute every metric for the selected batch.
+  // Batch & Workshop filters
   const batchOptions = ['All', ...new Set(data.students.map((s) => s.batch).filter(Boolean))]
-  const inAll = batch === 'All'
-  const fStudents = inAll ? data.students : data.students.filter((s) => s.batch === batch)
-  const fAttempts = inAll ? data.attempts : data.attempts.filter((a) => a.batch === batch)
-  const fResults = inAll ? data.results : data.results.filter((r) => r.batch === batch)
-  const view = inAll
-    ? data
-    : computeStats({ students: fStudents, tests: data.tests, attempts: fAttempts, results: fResults })
+  const workshopOptions = [
+    'All',
+    ...new Set([
+      ...data.tests.map((t) => t.workshopName).filter(Boolean),
+      ...data.students.map((s) => s.workshopName).filter(Boolean),
+    ]),
+  ]
+
+  const inBatch = (x) => batch === 'All' || (x.batch || 'Unknown') === batch
+  const inWorkshop = (x) =>
+    workshop === 'All' ||
+    x.workshopName === workshop ||
+    (!x.workshopName && workshop === 'Excel for Data Analytics')
+
+  const fStudents = data.students.filter((s) => inBatch(s) && inWorkshop(s))
+  const fTests = data.tests.filter((t) => inWorkshop(t))
+  const fAttempts = data.attempts.filter((a) => inBatch(a) && inWorkshop(a))
+  const fResults = data.results.filter((r) => inBatch(r) && inWorkshop(r))
+
+  const view = computeStats({
+    students: fStudents,
+    tests: fTests,
+    attempts: fAttempts,
+    results: fResults,
+  })
 
   const { cards, testWise, topicWise } = view
   const topPerformers = [...fAttempts].sort((a, b) => b.percentage - a.percentage).slice(0, 5)
@@ -56,8 +75,14 @@ export default function AdminDashboard() {
         <h1 className="text-2xl font-bold text-slate-800">Admin Dashboard</h1>
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">
+            <label className="text-sm font-medium text-slate-500">Workshop</label>
+            <select className="input w-44" value={workshop} onChange={(e) => setWorkshop(e.target.value)}>
+              {workshopOptions.map((w) => <option key={w}>{w}</option>)}
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
             <label className="text-sm font-medium text-slate-500">Batch</label>
-            <select className="input w-40" value={batch} onChange={(e) => setBatch(e.target.value)}>
+            <select className="input w-36" value={batch} onChange={(e) => setBatch(e.target.value)}>
               {batchOptions.map((b) => <option key={b}>{b}</option>)}
             </select>
           </div>

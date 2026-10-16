@@ -39,6 +39,8 @@ export async function registerStudent({
   branch,
   section,
   batch,
+  workshopId,
+  workshopName,
   password,
 }) {
   const normalizedUsn = usn.trim().toUpperCase()
@@ -63,6 +65,8 @@ export async function registerStudent({
       branch: branch.trim(),
       section: section.trim().toUpperCase(),
       batch: (batch || '').trim(),
+      workshopId: workshopId || null,
+      workshopName: workshopName || null,
       role: 'student',
       createdAt: serverTimestamp(),
     })
@@ -139,6 +143,8 @@ export async function updateStudent(id, data) {
   if ('branch' in data) patch.branch = data.branch
   if ('section' in data) patch.section = data.section
   if ('batch' in data) patch.batch = data.batch
+  if ('workshopId' in data) patch.workshopId = data.workshopId
+  if ('workshopName' in data) patch.workshopName = data.workshopName
   if (Object.keys(patch).length === 0) return
 
   // Best-effort: keep the denormalized copies in sync too. Display already
@@ -155,7 +161,7 @@ export async function updateStudent(id, data) {
   }
 }
 
-// Admin: re-propagate every student's CURRENT name/branch/section/batch onto
+// Admin: re-propagate every student's CURRENT name/branch/section/batch/workshop onto
 // all their attempts and results. Fixes historical drift for students that
 // were edited before per-edit cascading existed. Returns docs updated.
 export async function syncResultsWithStudents() {
@@ -170,6 +176,8 @@ export async function syncResultsWithStudents() {
     branch: s.branch ?? '',
     section: s.section ?? '',
     batch: s.batch ?? null,
+    workshopId: s.workshopId ?? null,
+    workshopName: s.workshopName ?? null,
   })
 
   const aSnap = await getDocs(collection(db, 'attempts'))
@@ -222,8 +230,9 @@ function cell(row, aliases) {
   return ''
 }
 
-function normalizeImportRow(row, { defaultBatch }) {
+function normalizeImportRow(row, { defaultBatch, defaultWorkshopId, defaultWorkshopName }) {
   const usn = cell(row, ['usn', 'roll', 'roll no', 'roll number', 'usn / roll number']).toUpperCase()
+  const workshopName = cell(row, ['workshop', 'workshop name', 'course']) || defaultWorkshopName || ''
   return {
     name: cell(row, ['name', 'full name', 'student name']),
     usn,
@@ -232,6 +241,8 @@ function normalizeImportRow(row, { defaultBatch }) {
     branch: cell(row, ['branch', 'department', 'dept']),
     section: cell(row, ['section', 'sec']).toUpperCase(),
     batch: cell(row, ['batch', 'batch year']) || defaultBatch || '',
+    workshopId: defaultWorkshopId || null,
+    workshopName,
     // Initial password is the student's own USN; they must change it on first
     // login (see mustChangePassword below).
     password: usn,
@@ -263,7 +274,7 @@ const AUTH_ERR = {
 //
 // Returns { total, created, failed, errors:[`<label>: <reason>`] }. Rows are
 // processed sequentially and one failure never aborts the rest.
-export async function bulkImportStudents(rows, { defaultBatch = '', onProgress } = {}) {
+export async function bulkImportStudents(rows, { defaultBatch = '', defaultWorkshopId = null, defaultWorkshopName = '', onProgress } = {}) {
   const summary = { total: rows.length, created: 0, failed: 0, errors: [] }
 
   const secApp = initializeApp(firebaseConfig, 'bulk-import')
@@ -274,7 +285,7 @@ export async function bulkImportStudents(rows, { defaultBatch = '', onProgress }
 
   try {
     for (let i = 0; i < rows.length; i++) {
-      const r = normalizeImportRow(rows[i], { defaultBatch })
+      const r = normalizeImportRow(rows[i], { defaultBatch, defaultWorkshopId, defaultWorkshopName })
       const label = r.usn || r.email || `row ${i + 2}`
 
       const invalid = validateImportRow(r)
@@ -299,6 +310,8 @@ export async function bulkImportStudents(rows, { defaultBatch = '', onProgress }
             branch: r.branch,
             section: r.section,
             batch: r.batch,
+            workshopId: r.workshopId || defaultWorkshopId || null,
+            workshopName: r.workshopName || defaultWorkshopName || '',
             role: 'student',
             // Password starts as the USN; force a change on first login.
             mustChangePassword: true,

@@ -40,7 +40,12 @@ export default function TestInstructions() {
   return (
     <div className="mx-auto max-w-2xl">
       <div className="card">
-        <span className="badge bg-brand/10 text-brand">{test.testType}</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="badge bg-brand/10 text-brand">{test.testType}</span>
+          {test.workshopName && (
+            <span className="badge bg-slate-100 text-slate-700">{test.workshopName}</span>
+          )}
+        </div>
         <h1 className="mt-2 text-2xl font-bold text-slate-800">{test.testTitle}</h1>
 
         <div className="mt-4 grid grid-cols-2 gap-4 text-sm">

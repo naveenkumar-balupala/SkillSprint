@@ -16,6 +16,7 @@ import Profile from './pages/student/Profile'
 // Admin pages
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
+import ManageWorkshops from './pages/admin/ManageWorkshops'
 import ManageStudents from './pages/admin/ManageStudents'
 import ManageQuestions from './pages/admin/ManageQuestions'
 import CreateTest from './pages/admin/CreateTest'
@@ -46,6 +47,7 @@ export default function App() {
 
           {/* Admin (protected) */}
           <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/admin/workshops" element={<ProtectedRoute requiredRole="admin"><ManageWorkshops /></ProtectedRoute>} />
           <Route path="/admin/students" element={<ProtectedRoute requiredRole="admin"><ManageStudents /></ProtectedRoute>} />
           <Route path="/admin/questions" element={<ProtectedRoute requiredRole="admin"><ManageQuestions /></ProtectedRoute>} />
           <Route path="/admin/create-test" element={<ProtectedRoute requiredRole="admin"><CreateTest /></ProtectedRoute>} />

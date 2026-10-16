@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { getAllStudents, deleteStudent, updateStudent, sendStudentPasswordReset, bulkImportStudents } from '../../services/studentService'
 import { getAllAttempts } from '../../services/attemptService'
 import { createBatch, deleteBatch, getAllBatches } from '../../services/batchService'
+import { getAllWorkshops } from '../../services/workshopService'
 import { getSettings, updateSettings } from '../../services/settingsService'
 import { exportToCSV, exportToExcel, readSpreadsheet } from '../../utils/export'
 import Loader from '../../components/Loader'
@@ -15,6 +16,7 @@ export default function ManageStudents() {
   const [students, setStudents] = useState([])
   const [attempts, setAttempts] = useState([])
   const [batches, setBatches] = useState([])
+  const [workshops, setWorkshops] = useState([])
   const [settings, setSettings] = useState(null)
   const [loading, setLoading] = useState(true)
   const [msg, setMsg] = useState({ type: '', text: '' })
@@ -23,13 +25,14 @@ export default function ManageStudents() {
   const [deleteBatchId, setDeleteBatchId] = useState(null)
   const [deleteTarget, setDeleteTarget] = useState(null) // student to delete
   const [editTarget, setEditTarget] = useState(null) // student being edited
-  const [editForm, setEditForm] = useState({ name: '', usn: '', email: '', phone: '', branch: '', section: '', batch: '' })
+  const [editForm, setEditForm] = useState({ name: '', usn: '', email: '', phone: '', branch: '', section: '', batch: '', workshopId: '', workshopName: '' })
   const [savingEdit, setSavingEdit] = useState(false)
 
   // ---- bulk import ----
   const [importOpen, setImportOpen] = useState(false)
   const [importFile, setImportFile] = useState(null)
   const [importBatch, setImportBatch] = useState('')
+  const [importWorkshopId, setImportWorkshopId] = useState('')
   const [importing, setImporting] = useState(false)
   const [importProgress, setImportProgress] = useState({ done: 0, total: 0 })
   const [importResult, setImportResult] = useState(null)
@@ -38,14 +41,22 @@ export default function ManageStudents() {
   const [branch, setBranch] = useState('All')
   const [section, setSection] = useState('All')
   const [batchFilter, setBatchFilter] = useState('All')
+  const [workshopFilter, setWorkshopFilter] = useState('All')
   const [sortKey, setSortKey] = useState('usn')
   const [sortDir, setSortDir] = useState('asc')
 
   const load = async () => {
-    const [s, a, b, cfg] = await Promise.all([getAllStudents(), getAllAttempts(), getAllBatches(), getSettings()])
+    const [s, a, b, w, cfg] = await Promise.all([
+      getAllStudents(),
+      getAllAttempts(),
+      getAllBatches(),
+      getAllWorkshops(),
+      getSettings(),
+    ])
     setStudents(s)
     setAttempts(a)
     setBatches(b)
+    setWorkshops(w)
     setSettings(cfg)
     setLoading(false)
   }
@@ -83,10 +94,14 @@ export default function ManageStudents() {
     const matchBranch = branch === 'All' || s.branch === branch
     const matchSection = section === 'All' || s.section === section
     const matchBatch = batchFilter === 'All' || s.batch === batchFilter
-    return matchSearch && matchBranch && matchSection && matchBatch
+    const matchWorkshop =
+      workshopFilter === 'All' ||
+      s.workshopId === workshopFilter ||
+      s.workshopName === workshopFilter
+    return matchSearch && matchBranch && matchSection && matchBatch && matchWorkshop
   })
 
-  // Sortable: usn (default), name, branch, section, batch.
+  // Sortable: usn (default), name, branch, section, batch, workshopName.
   const sorted = useMemo(() => {
     const arr = [...filtered]
     arr.sort((a, b) => {
@@ -97,7 +112,7 @@ export default function ManageStudents() {
     })
     return arr
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [students, search, branch, section, batchFilter, sortKey, sortDir])
+  }, [students, search, branch, section, batchFilter, workshopFilter, sortKey, sortDir])
 
   const toggleSort = (key) => {
     if (sortKey === key) setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
@@ -108,6 +123,7 @@ export default function ManageStudents() {
   const rows = sorted.map((s) => ({
     Name: s.name, USN: s.usn, Email: s.email, Phone: s.phone,
     Branch: s.branch, Section: s.section, Batch: s.batch || '',
+    Workshop: s.workshopName || '',
     TestsAttempted: attemptCount[s.id] || 0,
   }))
 
@@ -137,11 +153,13 @@ export default function ManageStudents() {
     setEditForm({
       name: s.name || '', usn: s.usn || '', email: s.email || '', phone: s.phone || '',
       branch: s.branch || 'CSE', section: s.section || 'A', batch: s.batch || '',
+      workshopId: s.workshopId || '', workshopName: s.workshopName || '',
     })
   }
   const saveEdit = async (e) => {
     e.preventDefault()
     setSavingEdit(true)
+    const assignedW = workshops.find((w) => w.id === editForm.workshopId)
     try {
       await updateStudent(editTarget.id, {
         name: editForm.name.trim(),
@@ -151,6 +169,8 @@ export default function ManageStudents() {
         branch: editForm.branch,
         section: editForm.section,
         batch: editForm.batch,
+        workshopId: editForm.workshopId || null,
+        workshopName: assignedW ? assignedW.name : editForm.workshopName || '',
       })
       setMsg({ type: 'success', text: 'Student details updated.' })
       setEditTarget(null)
@@ -165,7 +185,16 @@ export default function ManageStudents() {
   // ---- bulk import students ----
   const downloadTemplate = () => {
     exportToExcel(
-      [{ Name: 'Jane Doe', USN: '1XX21CS001', Email: 'jane@example.com', Phone: '9876543210', Branch: 'CSE', Section: 'A', Batch: batches[0]?.name || '2024-2027' }],
+      [{
+        Name: 'Jane Doe',
+        USN: '1XX21CS001',
+        Email: 'jane@example.com',
+        Phone: '9876543210',
+        Branch: 'CSE',
+        Section: 'A',
+        Batch: batches[0]?.name || '2024-2027',
+        Workshop: workshops[0]?.name || 'Excel for Data Analytics',
+      }],
       'students-import-template.xlsx',
       'Students',
     )
@@ -175,12 +204,15 @@ export default function ManageStudents() {
     if (!importFile) { setMsg({ type: 'error', text: 'Choose a CSV or Excel file first.' }); return }
     setImporting(true)
     setImportResult(null)
+    const targetW = workshops.find((w) => w.id === importWorkshopId)
     try {
       const rows = await readSpreadsheet(importFile)
       if (rows.length === 0) throw new Error('The file has no data rows.')
       setImportProgress({ done: 0, total: rows.length })
       const result = await bulkImportStudents(rows, {
         defaultBatch: importBatch,
+        defaultWorkshopId: targetW?.id || null,
+        defaultWorkshopName: targetW?.name || '',
         onProgress: (done, total) => setImportProgress({ done, total }),
       })
       setImportResult(result)
@@ -284,10 +316,17 @@ export default function ManageStudents() {
       </div>
 
       {/* ---- Filters ---- */}
-      <div className="card mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="card mb-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         <div>
           <label className="label">Search</label>
           <input className="input" placeholder="Name / USN / email" value={search} onChange={(e) => setSearch(e.target.value)} />
+        </div>
+        <div>
+          <label className="label">Workshop</label>
+          <select className="input" value={workshopFilter} onChange={(e) => setWorkshopFilter(e.target.value)}>
+            <option value="All">All Workshops</option>
+            {workshops.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
+          </select>
         </div>
         <div>
           <label className="label">Branch</label>
@@ -312,12 +351,13 @@ export default function ManageStudents() {
       {/* ---- Student table ---- */}
       <p className="mb-2 text-xs text-slate-400 sm:hidden">Swipe the table sideways to see more columns →</p>
       <div className="card overflow-x-auto">
-        <table className="w-full min-w-[760px] text-sm">
+        <table className="w-full min-w-[850px] text-sm">
           <thead>
             <tr className="text-left text-slate-500">
               <th className="cursor-pointer py-2 hover:text-slate-800" onClick={() => toggleSort('name')}>Name{arrow('name')}</th>
               <th className="cursor-pointer hover:text-slate-800" onClick={() => toggleSort('usn')}>USN{arrow('usn')}</th>
               <th>Email</th>
+              <th>Workshop</th>
               <th className="cursor-pointer hover:text-slate-800" onClick={() => toggleSort('branch')}>Branch{arrow('branch')}</th>
               <th className="cursor-pointer hover:text-slate-800" onClick={() => toggleSort('section')}>Section{arrow('section')}</th>
               <th className="cursor-pointer hover:text-slate-800" onClick={() => toggleSort('batch')}>Batch{arrow('batch')}</th>
@@ -330,6 +370,11 @@ export default function ManageStudents() {
                 <td className="py-2 font-medium">{s.name}</td>
                 <td>{s.usn}</td>
                 <td className="text-slate-500">{s.email}</td>
+                <td>
+                  <span className="badge bg-slate-100 text-slate-700">
+                    {s.workshopName || 'Excel for Data Analytics'}
+                  </span>
+                </td>
                 <td>{s.branch}</td>
                 <td>{s.section}</td>
                 <td>{s.batch || '—'}</td>
@@ -344,7 +389,7 @@ export default function ManageStudents() {
               </tr>
             ))}
             {sorted.length === 0 && (
-              <tr><td colSpan={8} className="py-6 text-center text-slate-400">No students match these filters. Try clearing the search or filters above.</td></tr>
+              <tr><td colSpan={9} className="py-6 text-center text-slate-400">No students match these filters. Try clearing the search or filters above.</td></tr>
             )}
           </tbody>
         </table>
@@ -416,6 +461,20 @@ export default function ManageStudents() {
                 ) : (
                   <input className="input" value={importBatch} disabled={importing} onChange={(e) => setImportBatch(e.target.value)} placeholder="e.g. 2024-2027" />
                 )}
+              </div>
+              <div>
+                <label className="label">Default Workshop</label>
+                <select
+                  className="input"
+                  value={importWorkshopId}
+                  disabled={importing}
+                  onChange={(e) => setImportWorkshopId(e.target.value)}
+                >
+                  <option value="">— from file / default —</option>
+                  {workshops.map((w) => (
+                    <option key={w.id} value={w.id}>{w.name}</option>
+                  ))}
+                </select>
               </div>
               <p className="text-xs text-slate-400">
                 Each student logs in with their email and their USN as the temporary password, then must set
@@ -507,6 +566,19 @@ export default function ManageStudents() {
                 ) : (
                   <input className="input" value={editForm.batch} onChange={(e) => setEditForm({ ...editForm, batch: e.target.value })} />
                 )}
+              </div>
+              <div>
+                <label className="label">Workshop</label>
+                <select
+                  className="input"
+                  value={editForm.workshopId}
+                  onChange={(e) => setEditForm({ ...editForm, workshopId: e.target.value })}
+                >
+                  <option value="">— none / general —</option>
+                  {workshops.map((w) => (
+                    <option key={w.id} value={w.id}>{w.name}</option>
+                  ))}
+                </select>
               </div>
             </div>
 

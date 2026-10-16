@@ -74,6 +74,13 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // ---- workshops ----
+    // Anyone (including registering students and home page visitors) can read workshops; admin manages.
+    match /workshops/{workshopId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // ---- attempts ----
     // Doc id is `${studentId}_${testId}` (see attemptService.js). Access is
     // gated on the studentId FIELD so that list queries (where studentId == me)

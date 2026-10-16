@@ -47,6 +47,7 @@ export function computeStats({ students = [], tests = [], attempts = [], results
   const sectionWise = groupAvg(submitted, 'section')
   const branchWise = groupAvg(submitted, 'branch')
   const batchWise = groupAvg(submitted, 'batch')
+  const workshopWise = groupAvg(submitted, 'workshopName')
 
   // ---- Topic-wise (weak areas) from results ----
   const topicAgg = {}
@@ -83,7 +84,7 @@ export function computeStats({ students = [], tests = [], attempts = [], results
   const grand = submitted.filter((a) => a.testType === 'Grand Test')
   const grandBuckets = scoreBuckets(grand.map((g) => g.percentage ?? 0))
 
-  return { cards, testWise, sectionWise, branchWise, batchWise, topicWise, dayWise, grandBuckets }
+  return { cards, testWise, sectionWise, branchWise, batchWise, workshopWise, topicWise, dayWise, grandBuckets }
 }
 
 // Overlay each attempt/result with the student's CURRENT profile fields, looked
@@ -100,6 +101,8 @@ function withCurrentStudent(items, studentsById) {
       branch: s.branch ?? x.branch,
       section: s.section ?? x.section,
       batch: s.batch ?? x.batch ?? null,
+      workshopId: x.workshopId ?? s.workshopId ?? null,
+      workshopName: x.workshopName ?? s.workshopName ?? null,
     }
   })
 }

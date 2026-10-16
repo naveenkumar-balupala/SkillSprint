@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { registerStudent } from '../../services/studentService'
 import { getAllBatches } from '../../services/batchService'
+import { getActiveWorkshops, ensureDefaultWorkshops } from '../../services/workshopService'
 import { getSettings } from '../../services/settingsService'
 import Alert from '../../components/Alert'
 import Loader from '../../components/Loader'
@@ -12,19 +13,48 @@ const SECTIONS = ['A', 'B', 'C', 'D']
 export default function Register() {
   const navigate = useNavigate()
   const [form, setForm] = useState({
-    name: '', usn: '', email: '', phone: '', branch: 'CSE', section: 'A', batch: '', password: '', confirm: '',
+    name: '',
+    usn: '',
+    email: '',
+    phone: '',
+    branch: 'CSE',
+    section: 'A',
+    batch: '',
+    workshopId: '',
+    workshopName: '',
+    password: '',
+    confirm: '',
   })
   const [batches, setBatches] = useState([])
+  const [workshops, setWorkshops] = useState([])
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
   const [regOpen, setRegOpen] = useState(null) // null = still loading the setting
 
-  // Load the admin-defined batch list. Students may ONLY pick from these.
+  // Load batches, workshops, settings
   useEffect(() => {
     getAllBatches()
       .then((b) => setBatches(b))
       .catch(() => setBatches([]))
+
+    getActiveWorkshops()
+      .then(async (w) => {
+        let list = w
+        if (list.length === 0) {
+          list = await ensureDefaultWorkshops()
+        }
+        setWorkshops(list)
+        if (list.length > 0) {
+          setForm((prev) => ({
+            ...prev,
+            workshopId: list[0].id,
+            workshopName: list[0].name,
+          }))
+        }
+      })
+      .catch(() => setWorkshops([]))
+
     getSettings()
       .then((cfg) => setRegOpen(cfg.registrationOpen))
       .catch(() => setRegOpen(true))
@@ -32,11 +62,22 @@ export default function Register() {
 
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value })
 
+  const handleWorkshopChange = (e) => {
+    const wid = e.target.value
+    const wObj = workshops.find((w) => w.id === wid)
+    setForm({
+      ...form,
+      workshopId: wid,
+      workshopName: wObj ? wObj.name : '',
+    })
+  }
+
   const validate = () => {
     if (!form.name.trim()) return 'Full name is required.'
     if (!/^[A-Za-z0-9]+$/.test(form.usn.trim())) return 'Enter a valid USN / Roll number.'
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) return 'Enter a valid email address.'
     if (!/^\d{10}$/.test(form.phone.trim())) return 'Phone number must be 10 digits.'
+    if (workshops.length > 0 && !form.workshopId) return 'Please select your workshop.'
     if (!form.batch.trim()) return 'Please select your batch.'
     if (form.password.length < 6) return 'Password must be at least 6 characters.'
     if (form.password !== form.confirm) return 'Passwords do not match.'
@@ -86,7 +127,7 @@ export default function Register() {
     <div className="mx-auto max-w-xl">
       <div className="card">
         <h1 className="text-2xl font-bold text-slate-800">Student Registration</h1>
-        <p className="mt-1 text-sm text-slate-500">Register once to access all tests.</p>
+        <p className="mt-1 text-sm text-slate-500">Register once to access tests for your workshop.</p>
 
         <form onSubmit={handleSubmit} className="mt-5 grid gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
@@ -105,6 +146,24 @@ export default function Register() {
             <label className="label">Email ID</label>
             <input className="input" type="email" value={form.email} onChange={set('email')} placeholder="jane@example.com" />
           </div>
+
+          <div className="sm:col-span-2">
+            <label className="label">Workshop Enrolled</label>
+            <select
+              className="input"
+              value={form.workshopId}
+              onChange={handleWorkshopChange}
+              disabled={workshops.length === 0}
+            >
+              <option value="">{workshops.length === 0 ? 'No workshops available — contact admin' : 'Select your workshop'}</option>
+              {workshops.map((w) => (
+                <option key={w.id} value={w.id}>
+                  {w.name} ({w.code || 'CODE'}) · {w.durationDays || 6} Days
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div>
             <label className="label">Branch</label>
             <select className="input" value={form.branch} onChange={set('branch')}>

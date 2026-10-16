@@ -77,7 +77,14 @@ export default function ResultPage() {
   return (
     <div className="mx-auto max-w-4xl">
       <div className={`rounded-2xl p-6 text-white ${pass ? 'bg-green-600' : 'bg-amber-600'}`}>
-        <p className="text-sm opacity-90">{result.testTitle}</p>
+        <div className="flex flex-wrap items-center gap-2 mb-1">
+          <p className="text-sm opacity-90">{result.testTitle}</p>
+          {(result.workshopName || test?.workshopName) && (
+            <span className="badge bg-white/20 text-white text-xs">
+              {result.workshopName || test?.workshopName}
+            </span>
+          )}
+        </div>
         <h1 className="text-3xl font-extrabold">{result.percentage}%</h1>
         <p className="mt-2 flex items-center gap-2 font-semibold">
           <span className="badge bg-white/20 text-white">{pass ? 'Pass' : 'Needs Improvement'}</span>

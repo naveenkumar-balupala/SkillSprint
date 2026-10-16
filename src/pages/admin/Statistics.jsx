@@ -28,6 +28,7 @@ export default function Statistics() {
   const [raw, setRaw] = useState(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
+  const [workshop, setWorkshop] = useState('All')
   const [batch, setBatch] = useState('All')
   const [testId, setTestId] = useState('All')
 
@@ -40,18 +41,38 @@ export default function Statistics() {
   }
   useEffect(() => { reload() }, [])
 
-  // Recompute metrics for the selected batch / test filter.
+  // Workshop & Batch options
+  const workshopOptions = useMemo(() => {
+    if (!raw) return ['All']
+    return ['All', ...new Set([
+      ...raw.tests.map((t) => t.workshopName).filter(Boolean),
+      ...raw.students.map((s) => s.workshopName).filter(Boolean),
+    ])]
+  }, [raw])
+
+  const availableTests = useMemo(() => {
+    if (!raw) return []
+    if (workshop === 'All') return raw.tests
+    return raw.tests.filter((t) => t.workshopName === workshop || (!t.workshopName && workshop === 'Excel for Data Analytics'))
+  }, [raw, workshop])
+
+  // Recompute metrics for the selected workshop / batch / test filter.
   const data = useMemo(() => {
     if (!raw) return null
+    const inWorkshop = (x) =>
+      workshop === 'All' ||
+      x.workshopName === workshop ||
+      (!x.workshopName && workshop === 'Excel for Data Analytics')
     const inBatch = (x) => batch === 'All' || (x.batch || 'Unknown') === batch
     const inTest = (x) => testId === 'All' || x.testId === testId
+
     return computeStats({
-      students: batch === 'All' ? raw.students : raw.students.filter((s) => (s.batch || 'Unknown') === batch),
-      tests: testId === 'All' ? raw.tests : raw.tests.filter((t) => t.id === testId),
-      attempts: raw.attempts.filter((a) => inBatch(a) && inTest(a)),
-      results: raw.results.filter((r) => inBatch(r) && inTest(r)),
+      students: raw.students.filter((s) => inBatch(s) && inWorkshop(s)),
+      tests: raw.tests.filter((t) => inWorkshop(t) && inTest(t)),
+      attempts: raw.attempts.filter((a) => inWorkshop(a) && inBatch(a) && inTest(a)),
+      results: raw.results.filter((r) => inWorkshop(r) && inBatch(r) && inTest(r)),
     })
-  }, [raw, batch, testId])
+  }, [raw, workshop, batch, testId])
 
   if (error) return <Alert type="error">{error}</Alert>
   if (loading || !data) return <Loader message="Crunching statistics…" />
@@ -67,6 +88,21 @@ export default function Statistics() {
         <h1 className="text-2xl font-bold text-slate-800">Statistics &amp; Reports</h1>
         <div className="flex flex-wrap items-end gap-3">
           <div>
+            <label className="label">Workshop</label>
+            <select
+              className="input"
+              value={workshop}
+              onChange={(e) => {
+                setWorkshop(e.target.value)
+                setTestId('All')
+              }}
+            >
+              {workshopOptions.map((w) => (
+                <option key={w}>{w}</option>
+              ))}
+            </select>
+          </div>
+          <div>
             <label className="label">Batch</label>
             <select className="input" value={batch} onChange={(e) => setBatch(e.target.value)}>
               {batchOptions.map((b) => <option key={b}>{b}</option>)}
@@ -76,7 +112,7 @@ export default function Statistics() {
             <label className="label">Test</label>
             <select className="input" value={testId} onChange={(e) => setTestId(e.target.value)}>
               <option value="All">All Tests</option>
-              {raw.tests.map((t) => <option key={t.id} value={t.id}>{t.testTitle}</option>)}
+              {availableTests.map((t) => <option key={t.id} value={t.id}>{t.testTitle}</option>)}
             </select>
           </div>
           <button className="btn-secondary" onClick={reload}>↻ Refresh</button>
@@ -88,7 +124,7 @@ export default function Statistics() {
       <div className="print-only mb-4 hidden">
         <h1 className="text-2xl font-bold text-slate-800">Assessment Statistics Report</h1>
         <p className="text-sm text-slate-600">
-          Batch: <b>{batch}</b> · Test: <b>{activeTest}</b>
+          Workshop: <b>{workshop}</b> · Batch: <b>{batch}</b> · Test: <b>{activeTest}</b>
         </p>
       </div>
 
