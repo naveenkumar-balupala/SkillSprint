@@ -1,9 +1,9 @@
 {
-  "name": "excel-assessment-platform",
+  "name": "skillsprint",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "homepage": "https://naveenkumar-balupala.github.io/excel_for_data_analytics",
+  "homepage": "https://naveenkumar-balupala.github.io/skillsprint",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

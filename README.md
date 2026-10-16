@@ -1,6 +1,6 @@
-# Excel for Data Analytics — Online Assessment Platform
+# SkillSprint — Online Assessment Platform
 
-A static **React + Firebase** assessment platform for the *Skill Sprint — Excel for Data Analytics* program. Students register, log in, and take a **Pre-Assessment**, six **Day-wise Tests**, and a **Grand Test** (30 MCQs each). Admins manage questions/tests and view rich performance dashboards. Built to deploy on **GitHub Pages** with all data stored permanently in **Firebase Firestore**.
+A static **React + Firebase** assessment platform for the **SkillSprint** technical workshop program. Students register, log in, and take workshop **Pre-Assessments**, **Day-wise Tests**, and **Grand Tests**. Admins manage workshops, questions, tests, and view rich performance dashboards. Built to deploy on **GitHub Pages** with all data stored permanently in **Firebase Firestore**.
 
 ---
 

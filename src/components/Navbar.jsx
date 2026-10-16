@@ -36,7 +36,7 @@ export default function Navbar() {
           </span>
           <span className="hidden items-baseline gap-2 sm:flex">
             <span className="text-lg font-extrabold tracking-tight text-slate-800">TORII</span>
-            <span className="text-xs font-medium text-slate-400">Assessment Platform</span>
+            <span className="text-xs font-medium text-slate-400">SkillSprint</span>
           </span>
         </Link>
 

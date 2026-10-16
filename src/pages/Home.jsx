@@ -19,7 +19,7 @@ export default function Home() {
     <div className="mx-auto max-w-4xl">
       <section className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-700 p-10 text-white shadow-lg">
         <Logo variant="light" className="text-5xl" />
-        <h1 className="mt-5 text-3xl font-extrabold sm:text-4xl">Workshop Assessment Platform</h1>
+        <h1 className="mt-5 text-3xl font-extrabold sm:text-4xl">SkillSprint</h1>
         <p className="mt-3 max-w-2xl text-slate-300">
           Comprehensive online assessment platform for conducting Pre-Assessments, Day-wise Tests, and Grand Tests across multiple technical workshops.
           Register once, attempt tests securely, and receive instant performance analytics.
