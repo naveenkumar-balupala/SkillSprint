@@ -44,8 +44,8 @@ export default function ManageWorkshops() {
         getAllQuestions(),
         getAllAttempts(),
       ])
-      // If no workshops exist, auto-seed the default Excel workshop so existing tests map cleanly
-      if (w.length === 0) {
+      // If no workshops exist or only the in-memory fallback exists, auto-seed to Firestore
+      if (w.length === 0 || (w.length === 1 && w[0].id === 'excel-analytics')) {
         const seeded = await ensureDefaultWorkshops()
         setWorkshops(seeded)
       } else {

@@ -7,6 +7,7 @@ import {
   getDoc,
   getDocs,
   query,
+  setDoc,
   updateDoc,
   where,
   serverTimestamp,
@@ -34,10 +35,19 @@ export async function updateWorkshop(id, data) {
   if (payload.durationDays !== undefined) payload.durationDays = Number(payload.durationDays) || 6
   if (payload.isActive !== undefined) payload.isActive = !!payload.isActive
 
-  return updateDoc(doc(db, COL, id), {
-    ...payload,
-    updatedAt: serverTimestamp(),
-  })
+  // If updating the in-memory default workshop that might not be in Firestore yet,
+  // merge default fields so all required properties exist upon first creation.
+  const base = id === 'excel-analytics' ? DEFAULT_WORKSHOP : {}
+
+  return setDoc(
+    doc(db, COL, id),
+    {
+      ...base,
+      ...payload,
+      updatedAt: serverTimestamp(),
+    },
+    { merge: true },
+  )
 }
 
 export async function deleteWorkshop(id) {
@@ -101,24 +111,18 @@ export async function ensureDefaultWorkshops() {
   if (all.length > 0 && all[0].id !== 'excel-analytics') return all
 
   try {
-    // Seed default "Excel for Data Analytics" workshop
-    const ref = await addDoc(collection(db, COL), {
-      name: 'Excel for Data Analytics',
-      code: 'EXCEL',
-      description: 'Master data analysis, cleaning, advanced formulas, and dashboards in Excel.',
-      durationDays: 6,
-      isActive: true,
+    // Seed default "Excel for Data Analytics" workshop with deterministic ID
+    await setDoc(doc(db, COL, 'excel-analytics'), {
+      name: DEFAULT_WORKSHOP.name,
+      code: DEFAULT_WORKSHOP.code,
+      description: DEFAULT_WORKSHOP.description,
+      durationDays: DEFAULT_WORKSHOP.durationDays,
+      isActive: DEFAULT_WORKSHOP.isActive,
       createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
     })
 
-    return [{
-      id: ref.id,
-      name: 'Excel for Data Analytics',
-      code: 'EXCEL',
-      description: 'Master data analysis, cleaning, advanced formulas, and dashboards in Excel.',
-      durationDays: 6,
-      isActive: true,
-    }]
+    return [DEFAULT_WORKSHOP]
   } catch (err) {
     console.warn('Could not seed default workshop to Firestore (requires admin permission):', err)
     return [DEFAULT_WORKSHOP]
