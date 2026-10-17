@@ -119,7 +119,13 @@ export default function ManageQuestions() {
     return matchWorkshop && matchType && matchTopic && matchDiff && matchDay
   }), [questions, fWorkshop, fType, fTopic, fDiff, fDay, workshops])
 
-  const topics = ['All', ...new Set(filtered.map((q) => q.topic).filter(Boolean))]
+  const topics = useMemo(() => {
+    const pool = fWorkshop === 'All'
+      ? questions
+      : questions.filter((q) => q.workshopId === fWorkshop || (!q.workshopId && fWorkshop === workshops[0]?.id))
+    const unique = Array.from(new Set(pool.map((q) => q.topic).filter(Boolean))).sort()
+    return ['All', ...unique]
+  }, [questions, fWorkshop, workshops])
 
   const resetForm = () => {
     setForm({

@@ -108,24 +108,21 @@ This repo includes [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml
    `VITE_FIREBASE_STORAGE_BUCKET`, `VITE_FIREBASE_MESSAGING_SENDER_ID`, `VITE_FIREBASE_APP_ID`.
 2. **Enable Pages via Actions:** Repo → **Settings → Pages → Build and deployment → Source = GitHub Actions**.
 3. **Push** (or click *Run workflow* on the Actions tab). The site deploys to
-   `https://naveenkumar-balupala.github.io/excel_for_data_analytics/`.
+   `https://naveenkumar-balupala.github.io/skillsprint/`.
 4. **Authorize the domain** in Firebase → Authentication → Settings → Authorized domains → add `naveenkumar-balupala.github.io`.
 
-> The `base` in [`vite.config.js`](vite.config.js) must stay `'/excel_for_data_analytics/'` (matches the repo name). Watch progress on the repo's **Actions** tab.
+> [`vite.config.js`](vite.config.js) uses relative `base: './'`, so the app works seamlessly under any repository name or custom domain. Watch progress on the repo's **Actions** tab.
 
 ## 🌐 Manual deploy to GitHub Pages (alternative)
 
-1. Create a GitHub repo, e.g. `excel-assessment-platform`, and push this project.
-2. In [`package.json`](package.json) set `homepage` to
-   `https://YOUR_USERNAME.github.io/excel-assessment-platform`.
-3. In [`vite.config.js`](vite.config.js) set `base` to `'/excel-assessment-platform/'` (must match the repo name; keep the leading & trailing slash).
-4. Deploy:
+1. Ensure [`package.json`](package.json) has your repository URL in `homepage` (e.g. `https://YOUR_USERNAME.github.io/skillsprint`).
+2. Deploy:
    ```bash
    npm run deploy
    ```
    This builds to `dist/` and pushes it to a `gh-pages` branch.
-5. GitHub repo → **Settings → Pages** → Source = **Deploy from a branch** → Branch = `gh-pages` / root → **Save**.
-6. Visit `https://YOUR_USERNAME.github.io/excel-assessment-platform/`.
+3. GitHub repo → **Settings → Pages** → Source = **Deploy from a branch** → Branch = `gh-pages` / root → **Save**.
+4. Visit `https://YOUR_USERNAME.github.io/skillsprint/`.
 
 > **Routing:** the app uses `HashRouter`, so URLs look like `/#/dashboard`. This avoids the GitHub Pages 404-on-refresh problem with no extra config.
 
