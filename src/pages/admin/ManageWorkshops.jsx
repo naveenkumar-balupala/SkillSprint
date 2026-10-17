@@ -44,13 +44,7 @@ export default function ManageWorkshops() {
         getAllQuestions(),
         getAllAttempts(),
       ])
-      // If no workshops exist or only the in-memory fallback exists, auto-seed to Firestore
-      if (w.length === 0 || (w.length === 1 && w[0].id === 'excel-analytics')) {
-        const seeded = await ensureDefaultWorkshops()
-        setWorkshops(seeded)
-      } else {
-        setWorkshops(w)
-      }
+      setWorkshops(w)
       setTests(t)
       setQuestions(q)
       setAttempts(a)
@@ -145,11 +139,18 @@ export default function ManageWorkshops() {
   }
 
   const toggleActive = async (w) => {
+    const nextActive = !w.isActive
+    setWorkshops((prev) =>
+      prev.map((item) => (item.id === w.id ? { ...item, isActive: nextActive } : item))
+    )
     try {
-      await updateWorkshop(w.id, { isActive: !w.isActive })
-      setMsg({ type: 'success', text: `Workshop ${w.isActive ? 'deactivated' : 'activated'}.` })
-      load()
+      await updateWorkshop(w.id, { isActive: nextActive })
+      setMsg({ type: 'success', text: `Workshop ${nextActive ? 'activated' : 'deactivated'}.` })
+      await load()
     } catch (err) {
+      setWorkshops((prev) =>
+        prev.map((item) => (item.id === w.id ? { ...item, isActive: w.isActive } : item))
+      )
       setMsg({ type: 'error', text: err.message })
     }
   }
