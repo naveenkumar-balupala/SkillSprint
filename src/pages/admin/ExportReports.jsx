@@ -31,7 +31,7 @@ export default function ExportReports() {
   const inWorkshop = (x) =>
     workshop === 'All' ||
     x.workshopName === workshop ||
-    (!x.workshopName && workshop === 'Excel for Data Analytics')
+    (!x.workshopName && workshop === 'General')
 
   const fStudents = students.filter((s) => inBatch(s) && inWorkshop(s))
   const fTests = tests.filter((t) => inWorkshop(t))
@@ -46,7 +46,7 @@ export default function ExportReports() {
     USN: s.usn,
     Email: s.email,
     Phone: s.phone,
-    Workshop: s.workshopName || 'Excel for Data Analytics',
+    Workshop: s.workshopName || 'General',
     Branch: s.branch,
     Section: s.section,
     Batch: s.batch || '',
@@ -55,7 +55,7 @@ export default function ExportReports() {
   const resultRows = fAttempts.map((a) => ({
     Name: a.studentName,
     USN: a.usn,
-    Workshop: a.workshopName || 'Excel for Data Analytics',
+    Workshop: a.workshopName || 'General',
     Branch: a.branch,
     Section: a.section,
     Batch: a.batch || '',
@@ -162,7 +162,7 @@ function buildNotAttempted(students, tests, attempts) {
         rows.push({
           Name: s.name,
           USN: s.usn,
-          Workshop: t.workshopName || s.workshopName || 'Excel for Data Analytics',
+          Workshop: t.workshopName || s.workshopName || 'General',
           Branch: s.branch,
           Section: s.section,
           Test: t.testTitle,

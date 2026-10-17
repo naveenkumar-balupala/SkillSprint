@@ -34,7 +34,7 @@ export default function Profile() {
         {field('Branch', profile?.branch)}
         {field('Section', profile?.section)}
         {field('Batch', profile?.batch)}
-        {field('Enrolled Workshop', profile?.workshopName || 'Excel for Data Analytics')}
+        {field('Enrolled Workshop', profile?.workshopName || 'General Workshop')}
       </div>
 
       <h2 className="mb-3 mt-8 text-lg font-semibold text-slate-800">Test History</h2>

@@ -38,11 +38,11 @@ export default function ViewResults() {
                 branch: s.branch ?? att.branch,
                 section: s.section ?? att.section,
                 batch: s.batch ?? att.batch ?? null,
-                workshopName: att.workshopName || s.workshopName || 'Excel for Data Analytics',
+                workshopName: att.workshopName || s.workshopName || 'General',
               }
             : {
                 ...att,
-                workshopName: att.workshopName || 'Excel for Data Analytics',
+                workshopName: att.workshopName || 'General',
               }
         })
       setAttempts(enriched)
@@ -86,7 +86,7 @@ export default function ViewResults() {
   }), [attempts, search, workshop, testType, branch, section, batch, minScore, maxScore])
 
   const rows = filtered.map((a) => ({
-    Name: a.studentName, USN: a.usn, Workshop: a.workshopName || 'Excel for Data Analytics',
+    Name: a.studentName, USN: a.usn, Workshop: a.workshopName || 'General',
     Branch: a.branch, Section: a.section, Batch: a.batch || '',
     Test: a.testTitle, Type: a.testType, Score: a.score, Percentage: a.percentage, Status: a.status,
   }))
@@ -169,7 +169,7 @@ export default function ViewResults() {
                 <td>{a.usn}</td>
                 <td>
                   <span className="badge bg-slate-100 text-slate-700">
-                    {a.workshopName || 'Excel for Data Analytics'}
+                    {a.workshopName || (workshops.find((w) => w.id === a.workshopId)?.name) || 'General'}
                   </span>
                 </td>
                 <td>{a.branch}</td>

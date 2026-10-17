@@ -193,7 +193,7 @@ export default function ManageStudents() {
         Branch: 'CSE',
         Section: 'A',
         Batch: batches[0]?.name || '2024-2027',
-        Workshop: workshops[0]?.name || 'Excel for Data Analytics',
+        Workshop: workshops[0]?.name || 'General',
       }],
       'students-import-template.xlsx',
       'Students',
@@ -372,7 +372,7 @@ export default function ManageStudents() {
                 <td className="text-slate-500">{s.email}</td>
                 <td>
                   <span className="badge bg-slate-100 text-slate-700">
-                    {s.workshopName || 'Excel for Data Analytics'}
+                    {s.workshopName || (workshops.find((w) => w.id === s.workshopId)?.name) || 'General'}
                   </span>
                 </td>
                 <td>{s.branch}</td>

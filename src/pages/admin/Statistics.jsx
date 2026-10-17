@@ -53,7 +53,7 @@ export default function Statistics() {
   const availableTests = useMemo(() => {
     if (!raw) return []
     if (workshop === 'All') return raw.tests
-    return raw.tests.filter((t) => t.workshopName === workshop || (!t.workshopName && workshop === 'Excel for Data Analytics'))
+    return raw.tests.filter((t) => t.workshopName === workshop || (!t.workshopName && (workshop === 'General' || workshop === 'excel-analytics')))
   }, [raw, workshop])
 
   // Recompute metrics for the selected workshop / batch / test filter.
@@ -62,7 +62,7 @@ export default function Statistics() {
     const inWorkshop = (x) =>
       workshop === 'All' ||
       x.workshopName === workshop ||
-      (!x.workshopName && workshop === 'Excel for Data Analytics')
+      (!x.workshopName && (workshop === 'General' || workshop === 'excel-analytics'))
     const inBatch = (x) => batch === 'All' || (x.batch || 'Unknown') === batch
     const inTest = (x) => testId === 'All' || x.testId === testId
 

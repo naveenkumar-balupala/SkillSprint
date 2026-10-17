@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { deleteTest, getAllTests, updateTest, setResultsReleased } from '../../services/testService'
 import { getAllAttempts } from '../../services/attemptService'
 import { getAllWorkshops } from '../../services/workshopService'
+import { getAllQuestions } from '../../services/questionService'
 import Loader from '../../components/Loader'
 import ConfirmModal from '../../components/ConfirmModal'
 
@@ -13,15 +14,22 @@ export default function ManageTests() {
   const [tests, setTests] = useState([])
   const [attempts, setAttempts] = useState([])
   const [workshops, setWorkshops] = useState([])
+  const [questions, setQuestions] = useState([])
   const [fWorkshop, setFWorkshop] = useState(initialWorkshop)
   const [loading, setLoading] = useState(true)
   const [deleteId, setDeleteId] = useState(null)
 
   const load = async () => {
-    const [t, a, w] = await Promise.all([getAllTests(), getAllAttempts(), getAllWorkshops()])
+    const [t, a, w, q] = await Promise.all([
+      getAllTests(),
+      getAllAttempts(),
+      getAllWorkshops(),
+      getAllQuestions().catch(() => []),
+    ])
     setTests(t)
     setAttempts(a)
     setWorkshops(w)
+    setQuestions(q)
     setLoading(false)
   }
   useEffect(() => { load() }, [])
@@ -31,6 +39,23 @@ export default function ManageTests() {
     attempts.forEach((a) => (map[a.testId] = (map[a.testId] || 0) + 1))
     return map
   }, [attempts])
+
+  const questionPoolByTest = useMemo(() => {
+    const map = {}
+    tests.forEach((t) => {
+      const match = questions.filter((qn) => {
+        const matchWorkshop = qn.workshopId
+          ? qn.workshopId === t.workshopId
+          : (!t.workshopId || t.workshopId === 'excel-analytics')
+        const matchType = qn.testType === t.testType
+        const matchDay =
+          t.testType === 'Day-wise Test' ? Number(qn.dayNumber) === Number(t.dayNumber) : true
+        return matchWorkshop && matchType && matchDay
+      })
+      map[t.id] = match.length
+    })
+    return map
+  }, [tests, questions])
 
   const filteredTests = useMemo(() => {
     if (fWorkshop === 'All') return tests
@@ -117,7 +142,8 @@ export default function ManageTests() {
               <th>Workshop</th>
               <th>Type</th>
               <th>Day</th>
-              <th>Qs</th>
+              <th>Target Qs</th>
+              <th>Bank Pool</th>
               <th>Duration</th>
               <th>Attempts</th>
               <th>Status</th>
@@ -131,12 +157,23 @@ export default function ManageTests() {
                 <td className="py-2 font-medium">{t.testTitle}</td>
                 <td>
                   <span className="badge bg-slate-100 text-slate-700">
-                    {t.workshopName || 'Excel for Data Analytics'}
+                    {t.workshopName || (workshops.find((w) => w.id === t.workshopId)?.name) || 'General'}
                   </span>
                 </td>
                 <td>{t.testType}</td>
                 <td>{t.dayNumber || '—'}</td>
                 <td>{t.totalQuestions}</td>
+                <td>
+                  {(questionPoolByTest[t.id] ?? 0) === 0 ? (
+                    <span className="badge bg-amber-100 text-amber-700 font-semibold" title="No questions in bank for this test">
+                      ⚠️ 0 in bank
+                    </span>
+                  ) : (
+                    <span className="badge bg-blue-50 text-blue-700 font-medium">
+                      {questionPoolByTest[t.id]} Qs
+                    </span>
+                  )}
+                </td>
                 <td>{t.duration} min</td>
                 <td><span className="badge bg-brand/10 text-brand">{attemptsByTest[t.id] || 0}</span></td>
                 <td>
@@ -160,6 +197,13 @@ export default function ManageTests() {
                     >
                       {t.resultsReleased ? 'Hide Results' : 'Release Results'}
                     </button>
+                    <Link
+                      to={`/admin/questions?workshopId=${t.workshopId || ''}`}
+                      className="btn-secondary"
+                      title="Manage question bank for this workshop"
+                    >
+                      Questions
+                    </Link>
                     <button className="btn-danger" onClick={() => setDeleteId(t.id)}>Delete</button>
                   </div>
                 </td>
@@ -167,7 +211,7 @@ export default function ManageTests() {
             ))}
             {sortedTests.length === 0 && (
               <tr>
-                <td colSpan={10} className="py-6 text-center text-slate-400">
+                <td colSpan={11} className="py-6 text-center text-slate-400">
                   No tests found for this workshop. Click "+ Create Test" to add one.
                 </td>
               </tr>

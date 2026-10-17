@@ -60,11 +60,13 @@ export async function getQuestionsForTest(testType, dayNumber = null, workshopId
 
   if (workshopId && workshopId !== 'All') {
     // Return questions explicitly matching the workshop.
-    // Also include questions without a workshopId if workshopId is marked as default/excel.
     const filtered = list.filter((qn) => qn.workshopId === workshopId)
-    // If no questions are tagged with workshopId yet (legacy data), return untagged questions
     if (filtered.length > 0) return filtered
-    return list.filter((qn) => !qn.workshopId)
+    // Only fall back to untagged legacy questions if the workshop is 'excel-analytics'
+    if (workshopId === 'excel-analytics') {
+      return list.filter((qn) => !qn.workshopId)
+    }
+    return []
   }
   return list
 }

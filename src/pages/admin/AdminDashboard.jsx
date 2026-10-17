@@ -39,7 +39,7 @@ export default function AdminDashboard() {
   const inWorkshop = (x) =>
     workshop === 'All' ||
     x.workshopName === workshop ||
-    (!x.workshopName && workshop === 'Excel for Data Analytics')
+    (!x.workshopName && (workshop === 'General' || workshop === 'excel-analytics'))
 
   const fStudents = data.students.filter((s) => inBatch(s) && inWorkshop(s))
   const fTests = data.tests.filter((t) => inWorkshop(t))
