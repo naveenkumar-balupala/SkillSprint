@@ -159,7 +159,7 @@ export default function ManageWorkshops() {
     try {
       await deleteWorkshop(deleteId)
       setDeleteId(null)
-      setMsg({ type: 'success', text: 'Workshop deleted.' })
+      setMsg({ type: 'success', text: 'Workshop, its tests, and its questions have been removed.' })
       load()
     } catch (err) {
       setMsg({ type: 'error', text: err.message })
@@ -412,8 +412,8 @@ export default function ManageWorkshops() {
       <ConfirmModal
         open={!!deleteId}
         title="Delete Workshop?"
-        message="Are you sure you want to delete this workshop? Existing test attempts and records will remain, but the workshop container will be removed."
-        confirmText="Delete"
+        message="Are you sure you want to delete this workshop? This will permanently remove the workshop along with all of its tests and questions from the question bank."
+        confirmText="Delete Workshop"
         danger
         onConfirm={confirmDelete}
         onCancel={() => setDeleteId(null)}

@@ -12,6 +12,8 @@ import {
   serverTimestamp,
 } from 'firebase/firestore'
 import { db } from '../firebase/config'
+import { deleteQuestionsByWorkshop } from './questionService'
+import { deleteTestsByWorkshop } from './testService'
 
 const COL = 'workshops'
 
@@ -45,6 +47,16 @@ export async function updateWorkshop(id, data) {
 }
 
 export async function deleteWorkshop(id) {
+  if (!id) return
+  // Cascade delete associated questions and tests so orphaned records don't persist
+  try {
+    await Promise.all([
+      deleteQuestionsByWorkshop(id).catch((err) => console.warn('Could not cascade delete questions:', err)),
+      deleteTestsByWorkshop(id).catch((err) => console.warn('Could not cascade delete tests:', err)),
+    ])
+  } catch (err) {
+    console.warn('Error during workshop cascade deletion:', err)
+  }
   return deleteDoc(doc(db, COL, id))
 }
 

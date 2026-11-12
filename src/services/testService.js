@@ -10,6 +10,7 @@ import {
   updateDoc,
   where,
   serverTimestamp,
+  writeBatch,
 } from 'firebase/firestore'
 import { db } from '../firebase/config'
 
@@ -38,6 +39,21 @@ export async function setResultsReleased(id, released) {
 
 export async function deleteTest(id) {
   return deleteDoc(doc(db, COL, id))
+}
+
+// Bulk delete all tests belonging to a specific workshop (cascade delete).
+export async function deleteTestsByWorkshop(workshopId) {
+  if (!workshopId) return 0
+  const q = query(collection(db, COL), where('workshopId', '==', workshopId))
+  const snap = await getDocs(q)
+  if (snap.empty) return 0
+  const docs = snap.docs
+  for (let i = 0; i < docs.length; i += 400) {
+    const batch = writeBatch(db)
+    docs.slice(i, i + 400).forEach((d) => batch.delete(d.ref))
+    await batch.commit()
+  }
+  return docs.length
 }
 
 export async function getTest(id) {

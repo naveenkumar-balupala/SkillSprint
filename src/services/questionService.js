@@ -32,6 +32,54 @@ export async function deleteQuestion(id) {
   return deleteDoc(doc(db, COL, id))
 }
 
+// Bulk delete all questions belonging to a specific workshop (cascade delete).
+export async function deleteQuestionsByWorkshop(workshopId) {
+  if (!workshopId) return 0
+  const q = query(collection(db, COL), where('workshopId', '==', workshopId))
+  const snap = await getDocs(q)
+  if (snap.empty) return 0
+  const docs = snap.docs
+  for (let i = 0; i < docs.length; i += 400) {
+    const batch = writeBatch(db)
+    docs.slice(i, i + 400).forEach((d) => batch.delete(d.ref))
+    await batch.commit()
+  }
+  return docs.length
+}
+
+// Remove all questions whose workshopId belongs to a workshop that no longer exists in Firestore.
+export async function cleanupOrphanedQuestions(validIds = null) {
+  let validSet
+  if (validIds && Array.isArray(validIds)) {
+    validSet = new Set(validIds)
+  } else if (validIds instanceof Set) {
+    validSet = validIds
+  } else {
+    const wSnap = await getDocs(collection(db, 'workshops'))
+    validSet = new Set(wSnap.docs.map((d) => d.id))
+    validSet.add('excel-analytics')
+  }
+
+  const qSnap = await getDocs(collection(db, COL))
+  const orphanedDocs = qSnap.docs.filter((d) => {
+    const qData = d.data()
+    // If workshopId is set but does not exist in valid workshops
+    if (qData.workshopId && !validSet.has(qData.workshopId)) {
+      return true
+    }
+    return false
+  })
+
+  if (orphanedDocs.length === 0) return 0
+
+  for (let i = 0; i < orphanedDocs.length; i += 400) {
+    const batch = writeBatch(db)
+    orphanedDocs.slice(i, i + 400).forEach((d) => batch.delete(d.ref))
+    await batch.commit()
+  }
+  return orphanedDocs.length
+}
+
 export async function getAllQuestions(workshopId = null) {
   let q
   if (workshopId && workshopId !== 'All') {

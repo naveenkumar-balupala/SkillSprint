@@ -1,9 +1,8 @@
-// Sample MCQ question bank based on the "Excel for Data Analytics" Skill Sprint
-// syllabus. Admin can seed these into Firestore with one click from the
-// "Manage Questions" page, then add/edit/delete more as needed.
-//
-// q(testType, dayNumber, topic, difficulty, text, options[4], correctIndex)
-const q = (testType, dayNumber, topic, difficulty, text, options, correctIndex) => ({
+// Multi-subject Question Bank & Question Seeding Generator.
+// Supports Excel, Python, Full Stack Web Development, Java & OOP, SQL, and Machine Learning,
+// as well as a dynamic Custom Subject / Syllabus Generator for any workshop topic.
+
+export const q = (testType, dayNumber, topic, difficulty, text, options, correctIndex) => ({
   testType,
   dayNumber,
   topic,
@@ -15,10 +14,10 @@ const q = (testType, dayNumber, topic, difficulty, text, options, correctIndex) 
 })
 
 // ---------------------------------------------------------------------------
-// PRE-ASSESSMENT (general Excel readiness) — 30 questions
+// 1. EXCEL FOR DATA ANALYTICS (240 questions)
 // ---------------------------------------------------------------------------
-const preAssessment = [
-  q('Pre-Assessment', null, 'Interface & Navigation', 'Easy', 'Which key combination moves the cursor to cell A1?', ['Ctrl + Home', 'Ctrl + End', 'Alt + Home', 'Shift + A1'], 0),
+const excelPreAssessment = [
+q('Pre-Assessment', null, 'Interface & Navigation', 'Easy', 'Which key combination moves the cursor to cell A1?', ['Ctrl + Home', 'Ctrl + End', 'Alt + Home', 'Shift + A1'], 0),
   q('Pre-Assessment', null, 'Interface & Navigation', 'Easy', 'What is the intersection of a row and a column called?', ['A cell', 'A range', 'A sheet', 'A field'], 0),
   q('Pre-Assessment', null, 'Data Types', 'Easy', 'By default, text entered in a cell aligns to the:', ['Left', 'Right', 'Center', 'Top'], 0),
   q('Pre-Assessment', null, 'Data Types', 'Easy', 'By default, numbers entered in a cell align to the:', ['Right', 'Left', 'Center', 'Bottom'], 0),
@@ -50,11 +49,8 @@ const preAssessment = [
   q('Pre-Assessment', null, 'Freeze Panes', 'Easy', 'Freeze Panes is used to:', ['Keep rows/columns visible while scrolling', 'Lock the file', 'Hide rows', 'Protect cells'], 0),
 ]
 
-// ---------------------------------------------------------------------------
-// DAY-WISE TESTS (Day 1–6) — 30 questions each.
-// ---------------------------------------------------------------------------
-const day1 = [
-  q('Day-wise Test', 1, 'Interface & Navigation', 'Easy', 'The Name Box in Excel shows the:', ['Address of the active cell', 'Formula result', 'Sheet name', 'File name'], 0),
+const excelDay1 = [
+q('Day-wise Test', 1, 'Interface & Navigation', 'Easy', 'The Name Box in Excel shows the:', ['Address of the active cell', 'Formula result', 'Sheet name', 'File name'], 0),
   q('Day-wise Test', 1, 'Interface & Navigation', 'Easy', 'Which shortcut moves to cell A1 from anywhere?', ['Ctrl + Home', 'Ctrl + End', 'Ctrl + A', 'Alt + Home'], 0),
   q('Day-wise Test', 1, 'Interface & Navigation', 'Easy', 'Ctrl + End moves the cursor to the:', ['Last used cell', 'First cell', 'Next sheet', 'Top row'], 0),
   q('Day-wise Test', 1, 'Interface & Navigation', 'Medium', 'Ctrl + Arrow key jumps to the:', ['Edge of the data region', 'Cell A1', 'Next sheet', 'The ribbon'], 0),
@@ -85,8 +81,8 @@ const day1 = [
   q('Day-wise Test', 1, 'Freeze Panes & Views', 'Easy', 'Freeze First Column keeps which column visible?', ['Column A', 'The active column', 'The last column', 'No column'], 0),
   q('Day-wise Test', 1, 'Freeze Panes & Views', 'Medium', 'Freeze Panes is most useful when working with:', ['Large datasets', 'Small datasets', 'Charts', 'A single cell'], 0),
 ]
-const day2 = [
-  q('Day-wise Test', 2, 'Remove Duplicates', 'Easy', 'After Remove Duplicates, Excel keeps:', ['The first occurrence', 'The last occurrence', 'No rows', 'All rows'], 0),
+const excelDay2 = [
+q('Day-wise Test', 2, 'Remove Duplicates', 'Easy', 'After Remove Duplicates, Excel keeps:', ['The first occurrence', 'The last occurrence', 'No rows', 'All rows'], 0),
   q('Day-wise Test', 2, 'Remove Duplicates', 'Easy', 'Remove Duplicates is found under which ribbon tab?', ['Data', 'Home', 'Insert', 'View'], 0),
   q('Day-wise Test', 2, 'Remove Duplicates', 'Medium', 'Remove Duplicates compares values based on the:', ['Selected columns', 'Cell colors', 'Font size', 'Row height'], 0),
   q('Day-wise Test', 2, 'Handle Blanks/Errors', 'Medium', 'Go To Special can quickly select all:', ['Blank cells', 'Bold cells', 'Sorted cells', 'Merged rows'], 0),
@@ -117,8 +113,8 @@ const day2 = [
   q('Day-wise Test', 2, 'Text Functions', 'Hard', 'SUBSTITUTE is used to:', ['Replace specific text with new text', 'Add numbers', 'Sort a column', 'Lock a cell'], 0),
   q('Day-wise Test', 2, 'Text Functions', 'Hard', 'Unlike FIND, the SEARCH function is:', ['Case-insensitive', 'Case-sensitive', 'For numbers only', 'Unavailable'], 0),
 ]
-const day3 = [
-  q('Day-wise Test', 3, 'Aggregation', 'Easy', 'AVERAGE ignores which type of cell?', ['Empty cells', 'Number cells', 'The active cell', 'Header cells only'], 0),
+const excelDay3 = [
+q('Day-wise Test', 3, 'Aggregation', 'Easy', 'AVERAGE ignores which type of cell?', ['Empty cells', 'Number cells', 'The active cell', 'Header cells only'], 0),
   q('Day-wise Test', 3, 'Aggregation', 'Easy', 'SUM is used to:', ['Add a range of numbers', 'Count cells', 'Find the average', 'Sort values'], 0),
   q('Day-wise Test', 3, 'Aggregation', 'Easy', 'MAX returns the:', ['Largest value', 'Smallest value', 'Average', 'Count'], 0),
   q('Day-wise Test', 3, 'Aggregation', 'Easy', 'MIN returns the:', ['Smallest value', 'Largest value', 'Sum', 'Count'], 0),
@@ -149,8 +145,8 @@ const day3 = [
   q('Day-wise Test', 3, 'Formulas', 'Easy', 'Every Excel formula must begin with:', ['=', '+', '@', '#'], 0),
   q('Day-wise Test', 3, 'Formulas', 'Medium', 'In =A1+A2*2, which operation runs first?', ['A2*2', 'A1+A2', 'Left to right', 'A1*2'], 0),
 ]
-const day4 = [
-  q('Day-wise Test', 4, 'VLOOKUP / HLOOKUP', 'Medium', 'HLOOKUP searches across a:', ['Row', 'Column', 'Sheet', 'Cell'], 0),
+const excelDay4 = [
+q('Day-wise Test', 4, 'VLOOKUP / HLOOKUP', 'Medium', 'HLOOKUP searches across a:', ['Row', 'Column', 'Sheet', 'Cell'], 0),
   q('Day-wise Test', 4, 'VLOOKUP / HLOOKUP', 'Medium', 'VLOOKUP searches for a value in the:', ['First column of a range', 'Last column', 'First row', 'Any column'], 0),
   q('Day-wise Test', 4, 'VLOOKUP / HLOOKUP', 'Medium', 'VLOOKUP returns #N/A when:', ['The value is not found', 'Data is sorted', 'The column is hidden', 'The cell is bold'], 0),
   q('Day-wise Test', 4, 'VLOOKUP / HLOOKUP', 'Medium', 'The col_index_num in VLOOKUP specifies the:', ['Column to return a value from', 'Row to search', 'Sheet name', 'Match type'], 0),
@@ -181,8 +177,8 @@ const day4 = [
   q('Day-wise Test', 4, 'Lookup', 'Easy', 'IFERROR is often wrapped around VLOOKUP to:', ['Replace #N/A with a friendly value', 'Sort the result', 'Speed it up', 'Hide the column'], 0),
   q('Day-wise Test', 4, 'Lookup', 'Medium', 'HLOOKUP uses a row_index_num to choose the:', ['Row to return a value from', 'Column to search', 'Sheet', 'Format'], 0),
 ]
-const day5 = [
-  q('Day-wise Test', 5, 'PivotTables', 'Easy', 'Dragging a field to the Values area by default applies:', ['SUM (for numbers)', 'COUNT always', 'AVERAGE always', 'No calculation'], 0),
+const excelDay5 = [
+q('Day-wise Test', 5, 'PivotTables', 'Easy', 'Dragging a field to the Values area by default applies:', ['SUM (for numbers)', 'COUNT always', 'AVERAGE always', 'No calculation'], 0),
   q('Day-wise Test', 5, 'PivotTables', 'Medium', 'A PivotTable is mainly used to:', ['Summarize large data', 'Format text', 'Print sheets', 'Lock cells'], 0),
   q('Day-wise Test', 5, 'PivotTables', 'Medium', 'After the source data changes, a PivotTable needs to be:', ['Refreshed', 'Deleted', 'Re-typed', 'Renamed'], 0),
   q('Day-wise Test', 5, 'PivotTables', 'Medium', 'The four PivotTable areas are Rows, Columns, Values and:', ['Filters', 'Charts', 'Macros', 'Sheets'], 0),
@@ -213,8 +209,8 @@ const day5 = [
   q('Day-wise Test', 5, 'PivotTables', 'Hard', 'PivotTable report layouts include Compact, Outline and:', ['Tabular', 'Diagonal', 'Circular', 'Random'], 0),
   q('Day-wise Test', 5, 'Charts', 'Medium', 'Chart selection should be driven by the:', ['Story the data tells', 'File size', 'Sheet color', 'Number of tabs'], 0),
 ]
-const day6 = [
-  q('Day-wise Test', 6, 'What-If Analysis', 'Medium', 'Goal Seek finds the input needed to reach a:', ['Target formula result', 'New chart', 'Random value', 'Sorted list'], 0),
+const excelDay6 = [
+q('Day-wise Test', 6, 'What-If Analysis', 'Medium', 'Goal Seek finds the input needed to reach a:', ['Target formula result', 'New chart', 'Random value', 'Sorted list'], 0),
   q('Day-wise Test', 6, 'What-If Analysis', 'Medium', 'Goal Seek changes which to hit a target?', ['One input cell', 'The formula', 'The chart', 'The sheet name'], 0),
   q('Day-wise Test', 6, 'What-If Analysis', 'Medium', 'Scenario Manager is used to compare:', ['Different sets of input values', 'Two files', 'Fonts', 'Sheet colors'], 0),
   q('Day-wise Test', 6, 'What-If Analysis', 'Easy', 'What-If Analysis tools are found under which tab?', ['Data', 'Home', 'Insert', 'View'], 0),
@@ -246,11 +242,8 @@ const day6 = [
   q('Day-wise Test', 6, 'Capstone', 'Hard', 'Interactivity in a final dashboard is usually added with:', ['Slicers and timelines', 'Merged cells', 'Hidden rows', 'Plain text'], 0),
 ]
 
-// ---------------------------------------------------------------------------
-// GRAND TEST (mixed, full-syllabus) — 30 questions
-// ---------------------------------------------------------------------------
-const grand = [
-  q('Grand Test', null, 'Cell Referencing', 'Medium', 'Copying =$B2*C$1 one cell right and down becomes:', ['=$B3*D$1', '=$C3*D$2', '=B3*C1', '=$B2*C$1'], 0),
+const excelGrand = [
+q('Grand Test', null, 'Cell Referencing', 'Medium', 'Copying =$B2*C$1 one cell right and down becomes:', ['=$B3*D$1', '=$C3*D$2', '=B3*C1', '=$B2*C$1'], 0),
   q('Grand Test', null, 'Excel Tables', 'Medium', 'A benefit of Excel Tables is that formulas:', ['Auto-fill to new rows', 'Cannot be copied', 'Break on sort', 'Hide automatically'], 0),
   q('Grand Test', null, 'Data Cleaning', 'Medium', 'TRIM is best used to fix:', ['Leading/trailing spaces', 'Wrong formulas', 'Missing charts', 'Date errors'], 0),
   q('Grand Test', null, 'Text Functions', 'Medium', 'TEXTSPLIT is used to:', ['Split text into multiple cells', 'Join text', 'Round numbers', 'Sort text'], 0),
@@ -282,20 +275,710 @@ const grand = [
   q('Grand Test', null, 'Capstone', 'Medium', 'The best way to present analysis to stakeholders is a:', ['Clear interactive dashboard', 'Raw data dump', 'A single number', 'A macro file'], 0),
 ]
 
-export const sampleQuestions = [
-  ...preAssessment,
-  ...day1, ...day2, ...day3, ...day4, ...day5, ...day6,
-  ...grand,
+export const excelQuestions = [
+  ...excelPreAssessment,
+  ...excelDay1, ...excelDay2, ...excelDay3, ...excelDay4, ...excelDay5, ...excelDay6,
+  ...excelGrand,
 ]
 
-// Default tests that pair with the sample questions.
+// ---------------------------------------------------------------------------
+// 2. PYTHON FOR PROGRAMMING & DATA SCIENCE
+// ---------------------------------------------------------------------------
+export const pythonQuestions = [
+  q('Pre-Assessment', null, 'Python Basics', 'Easy', 'Which of the following is an immutable data type in Python?', ['Tuple', 'List', 'Dictionary', 'Set'], 0),
+  q('Pre-Assessment', null, 'Python Basics', 'Easy', 'Which keyword is used to define a function in Python?', ['def', 'function', 'fun', 'define'], 0),
+  q('Pre-Assessment', null, 'Variables & Types', 'Easy', 'What is the output of type(5 / 2) in Python 3?', ['<class \'float\'>', '<class \'int\'>', '<class \'double\'>', '<class \'number\'>'], 0),
+  q('Pre-Assessment', null, 'Variables & Types', 'Easy', 'How do you create a single-line comment in Python?', ['# this is a comment', '// this is a comment', '/* this is a comment */', '<!-- this is a comment -->'], 0),
+  q('Pre-Assessment', null, 'Strings & Slicing', 'Medium', 'What does "Python"[1:4] return?', ['yth', 'Pyth', 'ytho', 'Pyt'], 0),
+  q('Pre-Assessment', null, 'Strings & Slicing', 'Medium', 'What is the result of "ha" * 3 in Python?', ['hahaha', 'ha3', 'SyntaxError', '["ha", "ha", "ha"]'], 0),
+  q('Pre-Assessment', null, 'Lists', 'Easy', 'Which method adds an element to the end of a list?', ['append()', 'push()', 'insert()', 'add()'], 0),
+  q('Pre-Assessment', null, 'Lists', 'Medium', 'What is the output of len([10, [20, 30], 40])?', ['3', '4', '2', 'Error'], 0),
+  q('Pre-Assessment', null, 'Dictionaries', 'Medium', 'How do you access the value of key "age" in dict d?', ['d["age"]', 'd(age)', 'd.key("age")', 'd->age'], 0),
+  q('Pre-Assessment', null, 'Control Flow', 'Easy', 'Which symbol is used for blocks of code instead of curly braces in Python?', ['Indentation (whitespace)', 'Semicolons', 'Parentheses', 'Angle brackets'], 0),
+  q('Pre-Assessment', null, 'Control Flow', 'Medium', 'What is the output of bool([]) in Python?', ['False', 'True', 'None', 'Error'], 0),
+  q('Pre-Assessment', null, 'Loops', 'Easy', 'What values does range(1, 5) produce when iterated over?', ['1, 2, 3, 4', '1, 2, 3, 4, 5', '0, 1, 2, 3, 4', '5, 4, 3, 2, 1'], 0),
+  q('Pre-Assessment', null, 'Operators', 'Medium', 'What does the // operator represent in Python?', ['Floor division', 'Float division', 'Modulus', 'Exponentiation'], 0),
+  q('Pre-Assessment', null, 'Operators', 'Easy', 'What is the result of 2 ** 3 in Python?', ['8', '6', '9', '5'], 0),
+  q('Pre-Assessment', null, 'Error Handling', 'Medium', 'Which block is executed when no exception occurs in a try statement?', ['else', 'catch', 'finally only', 'default'], 0),
+  q('Day-wise Test', 1, 'Syntax & Variables', 'Easy', 'Which of the following is a valid variable name in Python?', ['_user_name', '2nd_user', 'user-name', 'for'], 0),
+  q('Day-wise Test', 1, 'Syntax & Variables', 'Easy', 'Python is an interpreted language. What does this mean?', ['Code is executed line by line at runtime', 'Code must be pre-compiled into machine binary', 'It only runs in web browsers', 'It cannot use third-party libraries'], 0),
+  q('Day-wise Test', 1, 'Data Types', 'Easy', 'Which built-in function returns the memory address of an object in Python?', ['id()', 'addr()', 'ref()', 'loc()'], 0),
+  q('Day-wise Test', 1, 'Type Casting', 'Medium', 'What will int("10.5") produce in Python?', ['ValueError', '10', '10.5', '11'], 0),
+  q('Day-wise Test', 1, 'Strings', 'Medium', 'What is the output of f"{2 + 3 * 2}" using an f-string?', ['8', '10', '{2 + 3 * 2}', '2 + 3 * 2'], 0),
+  q('Day-wise Test', 1, 'Strings', 'Easy', 'Which string method converts all characters to lowercase?', ['lower()', 'casefold_only()', 'toLower()', 'down()'], 0),
+  q('Day-wise Test', 1, 'Operators', 'Medium', 'What is the output of 7 % 3?', ['1', '2', '2.33', '0'], 0),
+  q('Day-wise Test', 1, 'Operators', 'Medium', 'Which comparison operator checks if two variables point to the same object in memory?', ['is', '==', 'equals', '==='], 0),
+  q('Day-wise Test', 1, 'Input/Output', 'Easy', 'The input() function in Python always returns what data type?', ['str', 'int', 'float', 'bool'], 0),
+  q('Day-wise Test', 1, 'Booleans', 'Medium', 'Which of the following values evaluates to False in Python?', ['0', '"False"', '[0]', '1'], 0),
+  q('Day-wise Test', 2, 'Conditionals', 'Easy', 'Which keyword is used for "else if" conditions in Python?', ['elif', 'else if', 'elseif', 'elsif'], 0),
+  q('Day-wise Test', 2, 'Loops', 'Easy', 'Which statement terminates a loop immediately?', ['break', 'continue', 'pass', 'exit'], 0),
+  q('Day-wise Test', 2, 'Loops', 'Easy', 'Which statement skips the current iteration and moves to the next?', ['continue', 'break', 'skip', 'next'], 0),
+  q('Day-wise Test', 2, 'Loops', 'Medium', 'What does the pass statement do in Python?', ['Acts as a null placeholder doing nothing', 'Exits the loop', 'Skips to next loop', 'Throws an exception'], 0),
+  q('Day-wise Test', 2, 'While Loop', 'Medium', 'What happens if a while loop condition never becomes False?', ['An infinite loop occurs', 'Python raises an InfiniteLoopException', 'The loop executes once and terminates', 'The program auto-corrects the condition'], 0),
+  q('Day-wise Test', 2, 'List Comprehensions', 'Medium', 'What is the result of [x * 2 for x in [1, 2, 3]]?', ['[2, 4, 6]', '[1, 2, 3, 1, 2, 3]', '[2, 2, 2]', 'Error'], 0),
+  q('Day-wise Test', 2, 'List Comprehensions', 'Hard', 'What does [x for x in range(10) if x % 2 == 0] produce?', ['[0, 2, 4, 6, 8]', '[1, 3, 5, 7, 9]', '[2, 4, 6, 8, 10]', '[0, 1, 2, 3, 4]'], 0),
+  q('Day-wise Test', 2, 'Loop Else Clause', 'Hard', 'When does the else block of a for loop execute?', ['When the loop completes normally without encountering a break', 'Only if the loop was broken with break', 'Every single iteration', 'Never'], 0),
+  q('Day-wise Test', 2, 'Iterators', 'Medium', 'Which function returns an iterator of tuples containing index and element?', ['enumerate()', 'zip()', 'range()', 'index()'], 0),
+  q('Day-wise Test', 2, 'Iterators', 'Medium', 'What does zip([1, 2], ["a", "b"]) combine elements into?', ['Tuples: (1, "a"), (2, "b")', 'Dictionary: {1: 2, "a": "b"}', 'Nested lists: [[1, 2], ["a", "b"]]', 'A single list: [1, 2, "a", "b"]'], 0),
+  q('Day-wise Test', 3, 'Function Definition', 'Easy', 'What is the default return value of a Python function that has no return statement?', ['None', '0', 'False', 'Undefined'], 0),
+  q('Day-wise Test', 3, 'Arguments', 'Medium', 'In a function header def fn(*args), what type is args inside the function?', ['tuple', 'list', 'dict', 'set'], 0),
+  q('Day-wise Test', 3, 'Arguments', 'Medium', 'In def fn(**kwargs), what type is kwargs inside the function?', ['dict', 'tuple', 'list', 'string'], 0),
+  q('Day-wise Test', 3, 'Default Arguments', 'Hard', 'Why should you avoid using mutable default arguments like def add_item(val, lst=[])?', ['The default list is shared across all function calls', 'Python does not allow mutable defaults', 'It causes a syntax error', 'It slows down the execution by 50%'], 0),
+  q('Day-wise Test', 3, 'Lambda', 'Medium', 'What is a lambda function in Python?', ['An anonymous inline function with a single expression', 'A function that runs in a background thread', 'A recursive function', 'A function imported from the math module'], 0),
+  q('Day-wise Test', 3, 'Scope', 'Medium', 'What rule does Python follow to resolve variable names?', ['LEGB (Local, Enclosing, Global, Built-in)', 'FIFO (First In, First Out)', 'GLBE (Global, Local, Built-in, Enclosing)', 'Top-Down static scope only'], 0),
+  q('Day-wise Test', 3, 'Scope', 'Medium', 'Which keyword allows modifying a global variable inside a local function scope?', ['global', 'nonlocal', 'extern', 'public'], 0),
+  q('Day-wise Test', 3, 'Higher Order Functions', 'Medium', 'What does map(lambda x: x + 1, [1, 2, 3]) return in Python 3?', ['A map iterator object', '[2, 3, 4]', 'A generator function', 'A set'], 0),
+  q('Day-wise Test', 3, 'Modules', 'Easy', 'Which keyword is used to include code from an external module or library?', ['import', 'include', 'require', 'use'], 0),
+  q('Day-wise Test', 3, 'Modules', 'Medium', 'What is the purpose of if __name__ == "__main__":?', ['To run code only when the file is executed directly, not when imported', 'To verify the file has no syntax errors', 'To define the main class in OOP', 'To initialize virtual environments'], 0),
+  q('Day-wise Test', 4, 'Lists', 'Easy', 'Which list method removes and returns the last element by default?', ['pop()', 'remove()', 'del', 'discard()'], 0),
+  q('Day-wise Test', 4, 'Lists', 'Medium', 'What is the difference between list.sort() and sorted(list)?', ['sort() modifies in-place; sorted() returns a new list', 'sorted() modifies in-place; sort() returns a new list', 'They are identical aliases', 'sort() only works on numbers'], 0),
+  q('Day-wise Test', 4, 'Tuples', 'Easy', 'How do you define a single-element tuple in Python?', ['(5,)', '(5)', 'tuple[5]', '[5,]'], 0),
+  q('Day-wise Test', 4, 'Dictionaries', 'Easy', 'Which method safely retrieves a dictionary value without raising KeyError if the key is missing?', ['get()', 'fetch()', 'find()', 'lookup()'], 0),
+  q('Day-wise Test', 4, 'Dictionaries', 'Medium', 'What does dict.items() return?', ['Key-value tuple pairs', 'Only the keys', 'Only the values', 'A sorted list of keys'], 0),
+  q('Day-wise Test', 4, 'Sets', 'Easy', 'Which characteristic best describes a Python set?', ['Unordered collection of unique elements', 'Ordered sequence of key-value pairs', 'Indexed collection allowing duplicates', 'Immutable array of numbers'], 0),
+  q('Day-wise Test', 4, 'Sets', 'Medium', 'What is the result of {1, 2, 3} & {2, 3, 4}?', ['{2, 3}', '{1, 2, 3, 4}', '{1, 4}', '{}'], 0),
+  q('Day-wise Test', 4, 'Sets', 'Medium', 'Which operator calculates the union of two sets s1 and s2?', ['s1 | s2', 's1 & s2', 's1 + s2', 's1 ^ s2'], 0),
+  q('Day-wise Test', 4, 'Copying', 'Hard', 'What does copy.deepcopy() do compared to copy.copy()?', ['Recursively copies nested objects instead of copying references', 'Copies only top-level primitives', 'Copies memory addresses', 'Freezes objects to prevent modification'], 0),
+  q('Day-wise Test', 4, 'Strings', 'Medium', 'What does ",".join(["a", "b", "c"]) return?', ['"a,b,c"', '["a", ",", "b", ",", "c"]', '"abc"', '("a", "b", "c")'], 0),
+  q('Day-wise Test', 5, 'File I/O', 'Easy', 'Which mode opens a file for appending without truncating it?', ['"a"', '"w"', '"r"', '"x"'], 0),
+  q('Day-wise Test', 5, 'Context Managers', 'Medium', 'Why is with open("file.txt", "r") as f: preferred over f = open(...) ?', ['It automatically closes the file even if exceptions occur', 'It runs file operations 10x faster', 'It prevents read errors', 'It encrypts the file on disk'], 0),
+  q('Day-wise Test', 5, 'Exceptions', 'Easy', 'Which keyword raises an exception manually in Python?', ['raise', 'throw', 'catch', 'assert_error'], 0),
+  q('Day-wise Test', 5, 'Exceptions', 'Medium', 'Which block always runs regardless of whether an exception was raised or handled?', ['finally', 'else', 'except', 'always'], 0),
+  q('Day-wise Test', 5, 'OOP', 'Easy', 'In a Python class method, what does self represent?', ['The current instance of the class', 'The class blueprint itself', 'A global reference', 'A constructor keyword'], 0),
+  q('Day-wise Test', 5, 'OOP', 'Easy', 'What is the constructor method in a Python class?', ['__init__', '__new__', 'constructor', 'ClassInit'], 0),
+  q('Day-wise Test', 5, 'OOP', 'Medium', 'How does a class Child inherit from a class Parent in Python?', ['class Child(Parent):', 'class Child extends Parent:', 'class Child implements Parent:', 'class Child : Parent'], 0),
+  q('Day-wise Test', 5, 'OOP', 'Hard', 'What built-in function is used to call a method from the parent class?', ['super()', 'parent()', 'base()', 'super_class()'], 0),
+  q('Day-wise Test', 5, 'JSON', 'Medium', 'Which json method converts a Python dictionary into a JSON formatted string?', ['json.dumps()', 'json.loads()', 'json.dump()', 'json.parse()'], 0),
+  q('Day-wise Test', 5, 'JSON', 'Medium', 'Which json method parses a JSON string into a Python dictionary?', ['json.loads()', 'json.dumps()', 'json.parse()', 'json.read()'], 0),
+  q('Day-wise Test', 6, 'NumPy', 'Easy', 'Why are NumPy ndarrays faster than standard Python lists for numeric operations?', ['They store contiguous homogenous memory and support vectorized C operations', 'They use dynamic typing', 'They are written in pure JavaScript', 'They automatically compress data'], 0),
+  q('Day-wise Test', 6, 'NumPy', 'Medium', 'What does np.zeros((3, 4)) create?', ['A 2D array of 3 rows and 4 columns filled with 0s', 'A 1D array of 12 zeros', 'A 4x3 matrix of nulls', 'A diagonal matrix'], 0),
+  q('Day-wise Test', 6, 'NumPy', 'Medium', 'What is the shape of an array created with np.array([[1, 2, 3], [4, 5, 6]])?', ['(2, 3)', '(3, 2)', '(6,)', '(2, 2)'], 0),
+  q('Day-wise Test', 6, 'Pandas', 'Easy', 'What are the two primary data structures in Pandas?', ['Series (1D) and DataFrame (2D)', 'Array (1D) and Matrix (2D)', 'Vector and Tensor', 'Table and Column'], 0),
+  q('Day-wise Test', 6, 'Pandas', 'Easy', 'Which method reads a CSV file into a Pandas DataFrame?', ['pd.read_csv()', 'pd.load_csv()', 'pd.parse_csv()', 'pd.from_csv()'], 0),
+  q('Day-wise Test', 6, 'Pandas', 'Easy', 'Which DataFrame method previews the first 5 rows of data by default?', ['df.head()', 'df.tail()', 'df.preview()', 'df.first()'], 0),
+  q('Day-wise Test', 6, 'Pandas', 'Medium', 'What is the difference between df.loc[] and df.iloc[]?', ['loc[] uses label-based indexing; iloc[] uses integer-position indexing', 'iloc[] uses label-based indexing; loc[] uses integer-position indexing', 'loc[] is for rows only; iloc[] is for columns only', 'They are exact synonyms'], 0),
+  q('Day-wise Test', 6, 'Pandas', 'Medium', 'Which method displays summary statistics (mean, std, min, max) for numeric columns?', ['df.describe()', 'df.info()', 'df.stats()', 'df.summary()'], 0),
+  q('Day-wise Test', 6, 'Pandas', 'Medium', 'How do you filter a DataFrame df for rows where column "age" > 25?', ['df[df["age"] > 25]', 'df.filter("age > 25")', 'df.where("age" > 25)', 'df.select(age > 25)'], 0),
+  q('Day-wise Test', 6, 'Pandas', 'Medium', 'Which method drops rows with missing/null values in a DataFrame?', ['df.dropna()', 'df.remove_na()', 'df.fillna()', 'df.drop_null()'], 0),
+  q('Grand Test', null, 'Python Core', 'Medium', 'What is the output of print(type([]))?', ['<class \'list\'>', '<class \'array\'>', '<class \'tuple\'>', '<class \'collection\'>'], 0),
+  q('Grand Test', null, 'Python Core', 'Hard', 'What will [1, 2] + [3, 4] produce in Python?', ['[1, 2, 3, 4]', '[4, 6]', '[[1, 2], [3, 4]]', 'TypeError'], 0),
+  q('Grand Test', null, 'Control Flow', 'Medium', 'What is the ternary operator syntax in Python?', ['x if condition else y', 'condition ? x : y', 'if condition then x else y', 'x ? condition : y'], 0),
+  q('Grand Test', null, 'Data Structures', 'Medium', 'Which structure guarantees key insertion order in Python 3.7+?', ['dict', 'set', 'unordered_map', 'heap'], 0),
+  q('Grand Test', null, 'Functions', 'Hard', 'What is a decorator in Python?', ['A function that takes another function and extends its behavior without modifying it', 'A GUI layout wrapper', 'A class attribute syntax', 'A comment formatter'], 0),
+  q('Grand Test', null, 'OOP', 'Medium', 'Which method is called when an object is printed with print(obj)?', ['__str__', '__repr__', '__print__', '__show__'], 0),
+  q('Grand Test', null, 'File I/O', 'Medium', 'What does the with statement rely on under the hood?', ['__enter__() and __exit__() methods', '__init__() and __del__() methods', 'try and except only', 'OS file locking signals'], 0),
+  q('Grand Test', null, 'NumPy', 'Medium', 'What does np.arange(0, 10, 2) return?', ['array([0, 2, 4, 6, 8])', 'array([0, 2, 4, 6, 8, 10])', 'array([2, 4, 6, 8])', 'array([0, 1, 2, 3, 4])'], 0),
+  q('Grand Test', null, 'Pandas', 'Medium', 'Which method fills NaN values with a specific constant value?', ['df.fillna()', 'df.replace_na()', 'df.impute()', 'df.set_na()'], 0),
+  q('Grand Test', null, 'Pandas', 'Hard', 'Which method aggregates data grouped by one or more columns?', ['df.groupby()', 'df.aggregate()', 'df.pivot()', 'df.cluster()'], 0),
+]
+
+// ---------------------------------------------------------------------------
+// 3. FULL STACK WEB DEVELOPMENT (HTML, CSS, JS, REACT)
+// ---------------------------------------------------------------------------
+export const webdevQuestions = [
+  q('Pre-Assessment', null, 'HTML Basics', 'Easy', 'What does HTML stand for?', ['HyperText Markup Language', 'HighText Machine Language', 'HyperTransfer Mode Link', 'Home Tool Markup Language'], 0),
+  q('Pre-Assessment', null, 'CSS Basics', 'Easy', 'Which CSS property controls the text color of an element?', ['color', 'font-color', 'text-color', 'foreground'], 0),
+  q('Pre-Assessment', null, 'JavaScript Basics', 'Easy', 'Which keyword declares a block-scoped reassignable variable in modern JS?', ['let', 'var', 'const', 'dim'], 0),
+  q('Pre-Assessment', null, 'Web Protocols', 'Easy', 'What is the default HTTP port for standard web browsing?', ['80', '443', '8080', '21'], 0),
+  q('Pre-Assessment', null, 'DOM', 'Easy', 'Which object represents the web page in the browser?', ['document', 'window', 'page', 'screen'], 0),
+  q('Pre-Assessment', null, 'CSS Box Model', 'Medium', 'Which part of the box model surrounds the content and padding?', ['Border', 'Margin', 'Outline', 'Gutter'], 0),
+  q('Pre-Assessment', null, 'JavaScript Basics', 'Medium', 'What is the typeof null in JavaScript?', ['"object"', '"null"', '"undefined"', '"number"'], 0),
+  q('Pre-Assessment', null, 'HTML Semantics', 'Easy', 'Which HTML element represents navigation links?', ['<nav>', '<links>', '<menu>', '<navbar>'], 0),
+  q('Pre-Assessment', null, 'Web APIs', 'Medium', 'Which method is used to make HTTP requests in modern browsers?', ['fetch()', 'http.get()', 'request()', 'curl()'], 0),
+  q('Pre-Assessment', null, 'CSS Layout', 'Medium', 'Which display value creates a flexible one-dimensional layout?', ['flex', 'grid', 'block', 'inline-block'], 0),
+  q('Day-wise Test', 1, 'HTML5 Semantics', 'Easy', 'Which HTML5 element is most appropriate for a standalone blog post or article?', ['<article>', '<section>', '<div>', '<main>'], 0),
+  q('Day-wise Test', 1, 'HTML5 Forms', 'Easy', 'Which input attribute ensures a field must be completed before submitting?', ['required', 'validate', 'mandatory', 'must'], 0),
+  q('Day-wise Test', 1, 'CSS Box Model', 'Medium', 'What does box-sizing: border-box do?', ['Includes padding and border within the specified element width', 'Adds extra margins outside the box', 'Removes all element borders', 'Forces elements into a grid cell'], 0),
+  q('Day-wise Test', 1, 'CSS Flexbox', 'Easy', 'Which Flexbox property aligns items along the main axis?', ['justify-content', 'align-items', 'align-content', 'flex-direction'], 0),
+  q('Day-wise Test', 1, 'CSS Flexbox', 'Easy', 'Which Flexbox property aligns items along the cross axis?', ['align-items', 'justify-content', 'align-self', 'flex-wrap'], 0),
+  q('Day-wise Test', 1, 'CSS Grid', 'Medium', 'Which CSS layout module is designed specifically for two-dimensional layouts?', ['CSS Grid', 'Flexbox', 'Floats', 'Positioning'], 0),
+  q('Day-wise Test', 1, 'CSS Positioning', 'Medium', 'An element with position: absolute is positioned relative to:', ['Its closest positioned ancestor element', 'The root viewport always', 'Its parent node always', 'The document body only'], 0),
+  q('Day-wise Test', 1, 'Responsive Design', 'Medium', 'Which CSS rule allows styles to change based on device screen width?', ['@media', '@viewport', '@responsive', '@screen'], 0),
+  q('Day-wise Test', 1, 'Specificity', 'Hard', 'Which CSS selector has the highest specificity score?', ['An ID selector (#main)', 'A class selector (.active)', 'An element selector (p)', 'Universal selector (*)'], 0),
+  q('Day-wise Test', 1, 'Typography', 'Easy', 'Which CSS property specifies the font size of an element?', ['font-size', 'text-size', 'font-height', 'size'], 0),
+  q('Day-wise Test', 2, 'Variables', 'Easy', 'Which statement about const is true?', ['It cannot be reassigned after declaration', 'It cannot be used for objects or arrays', 'It has function scope like var', 'It can be declared without an initial value'], 0),
+  q('Day-wise Test', 2, 'Arrow Functions', 'Medium', 'How do arrow functions handle the this keyword differently from normal functions?', ['They lexically inherit this from the surrounding scope', 'They always bind this to the window object', 'They create a new this context', 'They do not allow access to variables'], 0),
+  q('Day-wise Test', 2, 'Destructuring', 'Medium', 'Given const obj = { name: "Sam", age: 22 }, how do you extract name with destructuring?', ['const { name } = obj', 'const [ name ] = obj', 'const name = obj.destruct()', 'const { name: obj }'], 0),
+  q('Day-wise Test', 2, 'Spread Operator', 'Medium', 'What does const combined = [...arr1, ...arr2] do?', ['Creates a new array merging elements of arr1 and arr2', 'Compares arr1 and arr2', 'Multiplies elements of arr1 by arr2', 'Converts arrays into an object'], 0),
+  q('Day-wise Test', 2, 'Array Methods', 'Easy', 'Which array method creates a new array with transformed elements?', ['map()', 'forEach()', 'filter()', 'reduce()'], 0),
+  q('Day-wise Test', 2, 'Array Methods', 'Medium', 'Which array method returns only elements that pass a test condition?', ['filter()', 'find()', 'some()', 'every()'], 0),
+  q('Day-wise Test', 2, 'Array Methods', 'Hard', 'Which array method accumulates array values into a single output value?', ['reduce()', 'accumulate()', 'fold()', 'join()'], 0),
+  q('Day-wise Test', 2, 'Template Literals', 'Easy', 'Template literals in JavaScript are enclosed by which character?', ['Backticks (`)', 'Single quotes (\')', 'Double quotes (")', 'Forward slashes (/)'], 0),
+  q('Day-wise Test', 2, 'Equality', 'Medium', 'What is the difference between == and === in JavaScript?', ['=== checks both value and data type without coercion', '== checks both value and data type', '=== is an assignment operator', 'They are exact aliases'], 0),
+  q('Day-wise Test', 2, 'Modules', 'Easy', 'Which keyword is used to export a function from an ES module?', ['export', 'module.send', 'public', 'publish'], 0),
+  q('Day-wise Test', 3, 'DOM Selection', 'Easy', 'Which method selects the first element matching a CSS selector?', ['document.querySelector()', 'document.getElement()', 'document.find()', 'document.select()'], 0),
+  q('Day-wise Test', 3, 'Event Handling', 'Easy', 'Which method attaches an event handler to a DOM element?', ['addEventListener()', 'attachEvent()', 'on()', 'bindEvent()'], 0),
+  q('Day-wise Test', 3, 'Events', 'Medium', 'What does e.preventDefault() do inside a form submit listener?', ['Prevents the default browser form submission and page reload', 'Stops event bubbling to parent elements', 'Clears all form input values', 'Deletes the event object'], 0),
+  q('Day-wise Test', 3, 'Events', 'Medium', 'What does e.stopPropagation() do?', ['Prevents the event from bubbling up the DOM tree', 'Stops browser reload', 'Cancels user clicks', 'Removes the event listener'], 0),
+  q('Day-wise Test', 3, 'DOM Manipulation', 'Easy', 'Which property modifies the text content of a DOM element securely?', ['textContent', 'innerHTML', 'outerHTML', 'textNode'], 0),
+  q('Day-wise Test', 3, 'DOM Manipulation', 'Medium', 'Which method creates a new DOM element node?', ['document.createElement()', 'document.newElement()', 'document.createNode()', 'new DOMElement()'], 0),
+  q('Day-wise Test', 3, 'Storage', 'Medium', 'Data stored in window.localStorage persists until:', ['Explicitly deleted by code or user clearing site data', 'The browser tab is closed', 'The user logs out', '24 hours have elapsed'], 0),
+  q('Day-wise Test', 3, 'Storage', 'Medium', 'How does sessionStorage differ from localStorage?', ['sessionStorage is cleared when the browser tab/session ends', 'sessionStorage holds only 1 KB of data', 'sessionStorage can only store numbers', 'sessionStorage is sent to the server on every request'], 0),
+  q('Day-wise Test', 3, 'Classes', 'Easy', 'Which method adds a CSS class "active" to element el?', ['el.classList.add("active")', 'el.addClass("active")', 'el.classes += "active"', 'el.setAttribute("active")'], 0),
+  q('Day-wise Test', 3, 'Timers', 'Easy', 'Which function runs a callback function repeatedly at specified intervals?', ['setInterval()', 'setTimeout()', 'setDelay()', 'requestFrame()'], 0),
+  q('Day-wise Test', 4, 'Promises', 'Medium', 'What are the three possible states of a JavaScript Promise?', ['Pending, Fulfilled, Rejected', 'Waiting, Success, Failure', 'Open, Running, Closed', 'Active, Inactive, Blocked'], 0),
+  q('Day-wise Test', 4, 'Promises', 'Easy', 'Which method handles a resolved Promise value?', ['.then()', '.catch()', '.finally()', '.done()'], 0),
+  q('Day-wise Test', 4, 'Promises', 'Easy', 'Which method handles an error in a Promise chain?', ['.catch()', '.then()', '.error()', '.reject()'], 0),
+  q('Day-wise Test', 4, 'Async/Await', 'Medium', 'What does an async function always return?', ['A Promise', 'A callback', 'An EventEmitter', 'A generator'], 0),
+  q('Day-wise Test', 4, 'Async/Await', 'Medium', 'Where can the await keyword be used?', ['Inside async functions or top-level ES modules', 'Inside any loop or conditional statement', 'Inside regular synchronous functions', 'Anywhere in CSS'], 0),
+  q('Day-wise Test', 4, 'Fetch API', 'Medium', 'Why do you need await response.json() after calling fetch(url)?', ['Parsing JSON body is an asynchronous streaming operation', 'fetch() only returns a status code', 'JSON.parse() is asynchronous', 'To validate HTTP security tokens'], 0),
+  q('Day-wise Test', 4, 'HTTP Methods', 'Easy', 'Which HTTP method is conventionally used to retrieve data from a server?', ['GET', 'POST', 'PUT', 'DELETE'], 0),
+  q('Day-wise Test', 4, 'HTTP Methods', 'Easy', 'Which HTTP method is conventionally used to submit new data to a server?', ['POST', 'GET', 'HEAD', 'OPTIONS'], 0),
+  q('Day-wise Test', 4, 'HTTP Codes', 'Easy', 'Which HTTP status code signifies "Not Found"?', ['404', '200', '500', '403'], 0),
+  q('Day-wise Test', 4, 'Event Loop', 'Hard', 'In the JavaScript event loop, microtasks (like Promise callbacks) execute:', ['Before macrotasks (like setTimeout callbacks)', 'After macrotasks always', 'Concurrently with web worker threads', 'Only on window unload'], 0),
+  q('Day-wise Test', 5, 'React Basics', 'Easy', 'What is JSX in React?', ['A syntax extension allowing HTML-like syntax inside JavaScript', 'A new programming language', 'A database query language', 'A CSS preprocessor'], 0),
+  q('Day-wise Test', 5, 'Components', 'Easy', 'A React component must return:', ['A single root JSX element or fragment (<>...</>)', 'Multiple un-nested tags', 'A string always', 'A DOM node reference'], 0),
+  q('Day-wise Test', 5, 'Props', 'Easy', 'How are props passed to a component in React?', ['As attributes in JSX like <Card title="Hello" />', 'Using window global variables', 'Via CSS classes', 'Through localStorage'], 0),
+  q('Day-wise Test', 5, 'Props', 'Medium', 'Are props in React mutable or read-only?', ['Props are read-only (immutable) within the component', 'Props can be directly modified by the child component', 'Props can only be changed with el.innerHTML', 'Props change automatically on scroll'], 0),
+  q('Day-wise Test', 5, 'useState', 'Medium', 'What does the useState hook return?', ['An array with the current state value and an updater function', 'Just the current state object', 'A Promise resolving to state', 'A boolean flag'], 0),
+  q('Day-wise Test', 5, 'useState', 'Hard', 'Why should state never be mutated directly (e.g., state.count = 5)?', ['Direct mutations do not trigger a component re-render', 'JavaScript throws a strict runtime error', 'It deletes the component from memory', 'It causes network disconnects'], 0),
+  q('Day-wise Test', 5, 'Lists & Keys', 'Medium', 'Why does React require a unique key prop when rendering lists?', ['To identify items efficiently when updating and re-ordering the DOM', 'To sort the list alphabetically', 'To style list items with CSS', 'To assign HTML IDs'], 0),
+  q('Day-wise Test', 5, 'Event Handling', 'Easy', 'In React JSX, how is a click event handled?', ['onClick={handleClick}', 'onclick="handleClick()"', 'click={handleClick}', 'on-click="handleClick"'], 0),
+  q('Day-wise Test', 5, 'Conditional Rendering', 'Medium', 'Which syntax displays a component only if isLoggedIn is true in JSX?', ['{isLoggedIn && <Dashboard />}', '<if={isLoggedIn}><Dashboard /></if>', '{if (isLoggedIn) <Dashboard />}', '{isLoggedIn ? <Dashboard />}'], 0),
+  q('Day-wise Test', 5, 'Controlled Components', 'Medium', 'What is a controlled component in React?', ['An input element whose value is controlled by React state', 'A component managed by Redux only', 'A read-only button', 'A component without props'], 0),
+  q('Day-wise Test', 6, 'useEffect', 'Medium', 'When does a useEffect with an empty dependency array [] execute?', ['Once, after the initial component mount', 'On every single re-render', 'Only when component unmounts', 'Before JSX is parsed'], 0),
+  q('Day-wise Test', 6, 'useEffect', 'Medium', 'When does a useEffect with dependencies [count] execute?', ['After initial mount and whenever count changes', 'Only when count is 0', 'On every DOM event', 'Never'], 0),
+  q('Day-wise Test', 6, 'useEffect', 'Hard', 'How do you clean up side effects (e.g., subscriptions, timers) in useEffect?', ['Return a cleanup function from the effect callback', 'Call effect.cleanup()', 'Add null to the dependency array', 'Delete the component'], 0),
+  q('Day-wise Test', 6, 'Routing', 'Easy', 'Which package is commonly used for client-side routing in React web applications?', ['react-router-dom', 'react-navigation', 'vue-router', 'page-router'], 0),
+  q('Day-wise Test', 6, 'Routing', 'Easy', 'In react-router-dom, which component replaces the HTML <a> tag to avoid full page reloads?', ['<Link to="...">', '<Anchor href="...">', '<Nav url="...">', '<Redirect to="...">'], 0),
+  q('Day-wise Test', 6, 'Routing', 'Medium', 'Which React Router hook allows programmatic navigation (e.g. after form submit)?', ['useNavigate()', 'useHistory()', 'useRedirect()', 'useLocation()'], 0),
+  q('Day-wise Test', 6, 'Routing', 'Medium', 'Which hook extracts URL route parameters like /users/:userId in React Router?', ['useParams()', 'useQuery()', 'useRoute()', 'useUrl()'], 0),
+  q('Day-wise Test', 6, 'Build & Bundling', 'Easy', 'What modern build tool is widely used to develop and bundle React applications fast?', ['Vite', 'Babel-only', 'Gulp', 'Grunt'], 0),
+  q('Day-wise Test', 6, 'Virtual DOM', 'Medium', 'What is the Virtual DOM in React?', ['A lightweight in-memory representation of the real DOM tree', 'A browser plugin', 'A shadow root DOM used for web components', 'A cloud database for UI templates'], 0),
+  q('Day-wise Test', 6, 'Performance', 'Hard', 'Which hook memoizes expensive calculation results between renders?', ['useMemo()', 'useCallback()', 'useEffect()', 'useRef()'], 0),
+  q('Grand Test', null, 'HTML/CSS', 'Medium', 'Which CSS unit is relative to the root font size of the <html> element?', ['rem', 'em', 'vh', 'px'], 0),
+  q('Grand Test', null, 'JavaScript', 'Medium', 'What does the Promise.all() method do?', ['Resolves when all promises resolve, or rejects immediately if any promise rejects', 'Runs promises sequentially one after another', 'Resolves only the fastest promise', 'Cancels all pending promises'], 0),
+  q('Grand Test', null, 'JavaScript', 'Hard', 'What is a closure in JavaScript?', ['A function bundled with references to its surrounding lexical state', 'A function that cannot return a value', 'A method to close browser tabs', 'A syntax error in async functions'], 0),
+  q('Grand Test', null, 'React', 'Medium', 'Which hook provides a persistent mutable reference that doesn\'t trigger re-renders?', ['useRef()', 'useState()', 'useMemo()', 'useContext()'], 0),
+  q('Grand Test', null, 'React', 'Medium', 'What is the purpose of React Context (createContext / useContext)?', ['To share state across component trees without prop drilling', 'To manage HTTP cookies', 'To speed up virtual DOM reconciliation', 'To replace JavaScript promises'], 0),
+  q('Grand Test', null, 'Web Security', 'Medium', 'What security issue does CORS (Cross-Origin Resource Sharing) address?', ['Restricting unauthorized domain requests to protect backend resources', 'Encrypting local storage passwords', 'Preventing SQL injection on the client', 'Validating HTML form inputs'], 0),
+  q('Grand Test', null, 'Web Performance', 'Medium', 'What technique delays loading of non-critical images or component chunks until needed?', ['Lazy loading', 'Pre-caching', 'Eager fetching', 'SSR'], 0),
+  q('Grand Test', null, 'CSS', 'Medium', 'In Flexbox, what does flex: 1 shorthand represent?', ['flex-grow: 1, flex-shrink: 1, flex-basis: 0%', 'flex-direction: row', 'display: flex', 'align-self: center'], 0),
+  q('Grand Test', null, 'DOM', 'Easy', 'Which method converts a JavaScript object into a JSON string?', ['JSON.stringify()', 'JSON.parse()', 'JSON.toObject()', 'Object.toJSON()'], 0),
+  q('Grand Test', null, 'Architecture', 'Medium', 'What defines a Single Page Application (SPA)?', ['A web app that loads a single HTML page and dynamically rewrites UI without full reloads', 'A site with only one image', 'A static HTML page without any JavaScript', 'An app that only works on single core processors'], 0),
+]
+
+// ---------------------------------------------------------------------------
+// 4. JAVA & OBJECT-ORIENTED PROGRAMMING
+// ---------------------------------------------------------------------------
+export const javaQuestions = [
+  q('Pre-Assessment', null, 'Java Basics', 'Easy', 'Which component of the Java platform is responsible for executing bytecode?', ['JVM (Java Virtual Machine)', 'JDK', 'JRE compiler', 'JDB'], 0),
+  q('Pre-Assessment', null, 'Java Basics', 'Easy', 'What is the extension of compiled Java bytecode files?', ['.class', '.java', '.jar', '.exe'], 0),
+  q('Pre-Assessment', null, 'Syntax', 'Easy', 'What is the entry point method signature for a standalone Java application?', ['public static void main(String[] args)', 'public void main(String args)', 'static void main()', 'public int main(String[] args)'], 0),
+  q('Pre-Assessment', null, 'Data Types', 'Easy', 'Which of the following is a primitive data type in Java?', ['int', 'String', 'Integer', 'Scanner'], 0),
+  q('Pre-Assessment', null, 'OOP', 'Easy', 'Which keyword is used to create an instance of a class in Java?', ['new', 'create', 'make', 'instanceof'], 0),
+  q('Pre-Assessment', null, 'OOP', 'Medium', 'Which concept refers to bundling data and methods that operate on that data inside a class?', ['Encapsulation', 'Polymorphism', 'Inheritance', 'Abstraction'], 0),
+  q('Pre-Assessment', null, 'Memory', 'Medium', 'Where are Java object instances allocated in memory?', ['Heap memory', 'Stack memory', 'Register memory', 'ROM'], 0),
+  q('Pre-Assessment', null, 'Control Flow', 'Easy', 'Which loop checks its condition at the end, executing at least once?', ['do-while loop', 'while loop', 'for loop', 'for-each loop'], 0),
+  q('Pre-Assessment', null, 'Strings', 'Medium', 'Are Java String objects mutable or immutable?', ['Immutable', 'Mutable', 'Dynamic pointers', 'Unsafe'], 0),
+  q('Pre-Assessment', null, 'Keywords', 'Easy', 'Which keyword prevents a class from being subclassed (inherited)?', ['final', 'static', 'abstract', 'const'], 0),
+  q('Day-wise Test', 1, 'Data Types', 'Easy', 'What is the default value of an uninitialized boolean instance variable in Java?', ['false', 'true', '0', 'null'], 0),
+  q('Day-wise Test', 1, 'Data Types', 'Medium', 'What is the size of the float data type in Java?', ['32 bits (4 bytes)', '64 bits (8 bytes)', '16 bits (2 bytes)', '8 bits (1 byte)'], 0),
+  q('Day-wise Test', 1, 'Type Casting', 'Medium', 'What happens during explicit narrowing casting from double to int?', ['Fractional decimal digits are truncated', 'The value is rounded to the nearest integer', 'A ClassCastException is thrown', 'The compilation fails'], 0),
+  q('Day-wise Test', 1, 'Operators', 'Medium', 'What is the result of 10 % 4 in Java?', ['2', '2.5', '1', '0'], 0),
+  q('Day-wise Test', 1, 'Control Flow', 'Easy', 'Which statement terminates a switch case block to prevent fall-through?', ['break;', 'continue;', 'exit;', 'stop;'], 0),
+  q('Day-wise Test', 1, 'Loops', 'Easy', 'What is the enhanced for loop syntax commonly called in Java?', ['for-each loop', 'iter-loop', 'while-in loop', 'repeat loop'], 0),
+  q('Day-wise Test', 1, 'Arrays', 'Easy', 'How is the length of an array arr determined in Java?', ['arr.length', 'arr.length()', 'arr.size()', 'arr.count'], 0),
+  q('Day-wise Test', 1, 'Arrays', 'Medium', 'What exception is thrown when accessing index 5 in an array of size 3?', ['ArrayIndexOutOfBoundsException', 'NullPointerException', 'IndexError', 'InvalidArrayException'], 0),
+  q('Day-wise Test', 1, 'Variables', 'Easy', 'Which variable type is declared inside a method and exists only during method execution?', ['Local variable', 'Instance variable', 'Static variable', 'Global variable'], 0),
+  q('Day-wise Test', 1, 'Scanner', 'Easy', 'Which class from java.util is commonly used to read console input?', ['Scanner', 'ConsoleReader', 'InputReader', 'Buffer'], 0),
+  q('Day-wise Test', 2, 'Classes', 'Easy', 'A class in Java is best described as:', ['A blueprint or template from which objects are created', 'An executing program', 'A physical device driver', 'A collection of global functions only'], 0),
+  q('Day-wise Test', 2, 'Constructors', 'Easy', 'What is the name of a class constructor in Java?', ['Same name as the class without any return type', 'construct()', 'init()', 'Same as class with void return type'], 0),
+  q('Day-wise Test', 2, 'Constructors', 'Medium', 'What happens if no constructor is written in a Java class?', ['The compiler provides a default no-argument constructor', 'The class cannot be instantiated', 'A compilation error occurs', 'The program crashes at runtime'], 0),
+  q('Day-wise Test', 2, 'Keyword this', 'Medium', 'What does the this keyword refer to inside an instance method?', ['The current object instance calling the method', 'The parent class', 'The static class context', 'The main method'], 0),
+  q('Day-wise Test', 2, 'Static Keyword', 'Medium', 'What does the static keyword on a variable mean?', ['The variable is shared across all instances of the class', 'The variable cannot be changed', 'The variable is stored on the stack', 'The variable is private'], 0),
+  q('Day-wise Test', 2, 'Static Methods', 'Hard', 'Why can static methods not access instance variables directly?', ['They execute without an instance of the class in memory', 'Static methods are compiled to C', 'Instance variables are always private', 'Java does not allow variables in methods'], 0),
+  q('Day-wise Test', 2, 'Garbage Collection', 'Medium', 'How is unused memory reclaimed in Java?', ['Automatically by the JVM Garbage Collector', 'Manually using free() or delete()', 'By clearing the hard drive', 'Memory cannot be reclaimed'], 0),
+  q('Day-wise Test', 2, 'Method Overloading', 'Medium', 'Method overloading occurs when two methods in the same class have:', ['The same name but different parameter lists', 'The same name and identical parameters', 'Different names but same return type', 'Different return types only'], 0),
+  q('Day-wise Test', 2, 'Access', 'Easy', 'Which access modifier makes a member visible only within its own class?', ['private', 'public', 'protected', 'default'], 0),
+  q('Day-wise Test', 2, 'Access', 'Medium', 'What is the scope of a member with default (package-private) access?', ['Accessible only within classes in the same package', 'Accessible everywhere in the project', 'Accessible only in subclasses', 'Accessible only in the same file'], 0),
+  q('Day-wise Test', 3, 'Inheritance', 'Easy', 'Which keyword does a class use to inherit from another class in Java?', ['extends', 'implements', 'inherits', 'subclass'], 0),
+  q('Day-wise Test', 3, 'Inheritance', 'Medium', 'Does Java support multiple inheritance of classes?', ['No, Java classes can only extend a single class', 'Yes, using commas after extends', 'Yes, up to 3 classes', 'Only if classes are abstract'], 0),
+  q('Day-wise Test', 3, 'Keyword super', 'Medium', 'What is super() used for inside a subclass constructor?', ['To invoke the constructor of the direct parent class', 'To create a static method', 'To override a method', 'To call the JVM'], 0),
+  q('Day-wise Test', 3, 'Method Overriding', 'Medium', 'When a subclass provides a specific implementation of an inherited parent method, it is called:', ['Method overriding', 'Method overloading', 'Method hiding', 'Dynamic casting'], 0),
+  q('Day-wise Test', 3, 'Annotations', 'Easy', 'Which annotation informs the compiler that a method is intended to override a superclass method?', ['@Override', '@Overload', '@Inherit', '@Super'], 0),
+  q('Day-wise Test', 3, 'Polymorphism', 'Hard', 'What is dynamic method dispatch (runtime polymorphism)?', ['Resolving an overridden method call at runtime based on the actual object type', 'Compiling methods into C++ dynamic libraries', 'Overloading methods at runtime', 'Dynamically importing packages'], 0),
+  q('Day-wise Test', 3, 'Object Class', 'Medium', 'Which class is the ultimate root superclass of every class in Java?', ['java.lang.Object', 'java.lang.Class', 'java.lang.System', 'java.base.Root'], 0),
+  q('Day-wise Test', 3, 'Keyword final', 'Medium', 'What happens if a method is declared as final?', ['It cannot be overridden by any subclass', 'It cannot be called', 'It runs in a separate thread', 'It returns a constant'], 0),
+  q('Day-wise Test', 3, 'Keyword instanceof', 'Medium', 'What does the instanceof operator test?', ['Whether an object is an instance of a specific class or interface', 'The size of an object in bytes', 'Whether two objects share the same memory', 'The hash code of an object'], 0),
+  q('Day-wise Test', 3, 'Upcasting', 'Hard', 'What is upcasting in Java?', ['Casting a subclass reference to a superclass reference type', 'Casting an int to a double', 'Casting a parent reference down to a child', 'Converting an object to a string'], 0),
+  q('Day-wise Test', 4, 'Abstract Classes', 'Medium', 'Which keyword defines a class that cannot be instantiated on its own?', ['abstract', 'interface', 'virtual', 'static'], 0),
+  q('Day-wise Test', 4, 'Abstract Methods', 'Medium', 'An abstract method in Java has:', ['No method body (implementation)', 'A default empty body', 'Only static variables', 'A final modifier'], 0),
+  q('Day-wise Test', 4, 'Interfaces', 'Easy', 'Which keyword does a class use to implement an interface?', ['implements', 'extends', 'uses', 'inherits'], 0),
+  q('Day-wise Test', 4, 'Interfaces', 'Medium', 'Can a Java class implement multiple interfaces?', ['Yes, separated by commas', 'No, only one interface is allowed', 'Only if the class is abstract', 'Only in Java 5 and below'], 0),
+  q('Day-wise Test', 4, 'Interface Fields', 'Hard', 'By default, variables declared in a Java interface are:', ['public static final', 'private dynamic', 'protected static', 'transient volatile'], 0),
+  q('Day-wise Test', 4, 'Encapsulation', 'Easy', 'How is encapsulation achieved in a Java class?', ['Declaring fields private and providing public getters and setters', 'Making all fields public', 'Using abstract classes only', 'Extending java.lang.Object'], 0),
+  q('Day-wise Test', 4, 'Packages', 'Easy', 'Which keyword defines the package a Java source file belongs to?', ['package', 'namespace', 'module', 'library'], 0),
+  q('Day-wise Test', 4, 'Default Methods', 'Hard', 'Since Java 8, interfaces can contain concrete method implementations using which keyword?', ['default', 'concrete', 'impl', 'abstract'], 0),
+  q('Day-wise Test', 4, 'Abstract vs Interface', 'Medium', 'What is a key difference between an abstract class and an interface?', ['An abstract class can have instance state (fields) and constructors; an interface cannot', 'Interfaces cannot have methods', 'Abstract classes cannot have code', 'They are exact aliases'], 0),
+  q('Day-wise Test', 4, 'Static in Interface', 'Medium', 'Can an interface define static methods in modern Java (Java 8+)?', ['Yes, static utility methods are supported in interfaces', 'No, interfaces cannot have any static code', 'Only in Java 17+', 'Only if private'], 0),
+  q('Day-wise Test', 5, 'Exception Hierarchy', 'Medium', 'Which class is the superclass of all exceptions and errors in Java?', ['java.lang.Throwable', 'java.lang.Exception', 'java.lang.Error', 'java.lang.RuntimeException'], 0),
+  q('Day-wise Test', 5, 'Exceptions', 'Easy', 'Which block in Java catches and handles thrown exceptions?', ['catch', 'try', 'finally', 'throw'], 0),
+  q('Day-wise Test', 5, 'Exceptions', 'Easy', 'Which block is guaranteed to execute whether an exception is thrown or caught?', ['finally', 'else', 'default', 'close'], 0),
+  q('Day-wise Test', 5, 'Checked Exceptions', 'Hard', 'What is a checked exception in Java?', ['An exception checked at compile time that must be handled or declared with throws', 'An exception that only crashes in production', 'An error caused by hardware', 'A RuntimeException subclass'], 0),
+  q('Day-wise Test', 5, 'Unchecked Exceptions', 'Medium', 'Which of the following is an unchecked (Runtime) exception?', ['NullPointerException', 'IOException', 'SQLException', 'ClassNotFoundException'], 0),
+  q('Day-wise Test', 5, 'Keywords', 'Medium', 'What is the difference between throw and throws?', ['throw explicitly raises an exception; throws declares exceptions in a method signature', 'throws raises an exception; throw catches it', 'They are exact synonyms', 'throw is for checked exceptions only'], 0),
+  q('Day-wise Test', 5, 'Strings', 'Medium', 'Why does String str = "a" + "b" create new objects in memory?', ['Strings are immutable; modifying them creates a new String instance', 'Strings are stored in the stack', 'Because Java does not use garbage collection', 'String concatenation is an error'], 0),
+  q('Day-wise Test', 5, 'StringBuilder', 'Easy', 'Which class should you use for efficient, mutable string manipulation in single-threaded code?', ['StringBuilder', 'String', 'StringFormatter', 'CharBuffer'], 0),
+  q('Day-wise Test', 5, 'String Comparison', 'Medium', 'What is the correct way to check if two String objects have the same character content?', ['str1.equals(str2)', 'str1 == str2', 'str1.is(str2)', 'str1 === str2'], 0),
+  q('Day-wise Test', 5, 'Try-with-resources', 'Hard', 'What interface must an object implement to be used in try-with-resources?', ['AutoCloseable', 'CloseableResource', 'Disposable', 'Serializable'], 0),
+  q('Day-wise Test', 6, 'Collections Hierarchy', 'Easy', 'Which interface is the root of the standard collection hierarchy (excluding Map)?', ['Collection', 'List', 'Iterable', 'Queue'], 0),
+  q('Day-wise Test', 6, 'List vs Set', 'Easy', 'What is the fundamental difference between a List and a Set in Java?', ['List allows duplicate elements and maintains order; Set contains only unique elements', 'Set allows duplicates; List does not', 'List is unordered; Set is sorted', 'List cannot store objects'], 0),
+  q('Day-wise Test', 6, 'ArrayList', 'Medium', 'What data structure backs an ArrayList in Java?', ['A dynamic, resizable array', 'A doubly-linked list', 'A binary search tree', 'A hash table'], 0),
+  q('Day-wise Test', 6, 'LinkedList', 'Medium', 'When is LinkedList preferred over ArrayList?', ['When frequent insertions and deletions happen in the middle or head of the list', 'When fast random index access is needed', 'When memory usage must be minimized', 'When storing primitive types'], 0),
+  q('Day-wise Test', 6, 'HashMap', 'Easy', 'How does HashMap store its elements?', ['As key-value pairs', 'As ordered indices', 'As single unique values', 'As linked nodes only'], 0),
+  q('Day-wise Test', 6, 'HashMap', 'Medium', 'What methods must an object properly override to be used safely as a HashMap key?', ['equals() and hashCode()', 'toString() and compareTo()', 'clone() and finalize()', 'hash() and getKey()'], 0),
+  q('Day-wise Test', 6, 'HashSet', 'Easy', 'What backing structure does a Java HashSet use internally?', ['A HashMap instance', 'An ArrayList', 'A Red-Black tree', 'A primitive array'], 0),
+  q('Day-wise Test', 6, 'Generics', 'Medium', 'Why are generics (e.g., List<String>) used in the Collections Framework?', ['To provide compile-time type safety and eliminate runtime casting', 'To compress list memory on disk', 'To allow primitive storage without boxing', 'To speed up network transfers'], 0),
+  q('Day-wise Test', 6, 'Iterators', 'Medium', 'Which Iterator method safely removes an element while iterating over a collection?', ['iterator.remove()', 'collection.remove()', 'delete()', 'iterator.pop()'], 0),
+  q('Day-wise Test', 6, 'Comparable vs Comparator', 'Hard', 'What is the difference between Comparable and Comparator?', ['Comparable defines natural ordering via compareTo(); Comparator defines custom sorting via compare()', 'Comparable is an interface; Comparator is a class', 'Comparator is for numbers only', 'They are exact synonyms'], 0),
+  q('Grand Test', null, 'Core Java', 'Medium', 'What is the output of System.out.println(10 + 20 + "Java"); ?', ['"30Java"', '"1020Java"', '"Java30"', 'Compilation error'], 0),
+  q('Grand Test', null, 'Core Java', 'Medium', 'What is autoboxing in Java?', ['Automatic conversion of primitive types to their corresponding wrapper classes', 'Compiling code into a JAR box', 'Packing bytecode into memory', 'Boxing references into pointers'], 0),
+  q('Grand Test', null, 'OOP', 'Hard', 'Can a constructor be declared private in Java?', ['Yes, commonly used in Singleton design patterns or utility classes', 'No, constructors must be public', 'Only if the class is abstract', 'Only inside interfaces'], 0),
+  q('Grand Test', null, 'Collections', 'Medium', 'Which Collection class is thread-safe and synchronizes method access?', ['Vector (or Collections.synchronizedList)', 'ArrayList', 'LinkedList', 'HashSet'], 0),
+  q('Grand Test', null, 'Memory', 'Hard', 'What happens during an OutOfMemoryError in Java?', ['The JVM Heap memory is completely exhausted and garbage collection cannot free enough space', 'The hard drive is 100% full', 'A stack overflow occurred from infinite recursion', 'A thread was killed'], 0),
+  q('Grand Test', null, 'Exceptions', 'Medium', 'Can a single try block have multiple catch blocks?', ['Yes, but more specific subclasses must come before broader superclass exceptions', 'Yes, and order does not matter', 'No, only one catch block is permitted', 'Only if using finally'], 0),
+  q('Grand Test', null, 'JVM', 'Medium', 'What is the role of the JIT (Just-In-Time) compiler in the JVM?', ['Compiles frequently executed bytecode into native machine code at runtime for high performance', 'Interprets source code before saving', 'Validates Java syntax on disk', 'Clears garbage objects'], 0),
+  q('Grand Test', null, 'Keywords', 'Easy', 'Which keyword is used to import a package into a Java file?', ['import', 'using', 'require', 'include'], 0),
+  q('Grand Test', null, 'Strings', 'Medium', 'What does str.substring(1, 4) return for String str = "SkillSprint"?', ['"kil"', '"kill"', '"kilS"', '"ill"'], 0),
+  q('Grand Test', null, 'OOP', 'Medium', 'Which principle states that subclasses should be substitutable for their base classes?', ['Liskov Substitution Principle (LSP)', 'Single Responsibility Principle', 'Open/Closed Principle', 'Interface Segregation Principle'], 0),
+]
+
+// ---------------------------------------------------------------------------
+// 5. SQL & RELATIONAL DATABASES
+// ---------------------------------------------------------------------------
+export const sqlQuestions = [
+  q('Pre-Assessment', null, 'DBMS Basics', 'Easy', 'What does SQL stand for?', ['Structured Query Language', 'Standard Question Language', 'Sequential Query Logic', 'Simple Query Layout'], 0),
+  q('Pre-Assessment', null, 'Relational Concepts', 'Easy', 'In a relational database, what does a row in a table represent?', ['A single record or entity instance', 'An attribute or column', 'A database schema', 'An index pointer'], 0),
+  q('Pre-Assessment', null, 'Keys', 'Easy', 'Which constraint uniquely identifies each record in a database table?', ['PRIMARY KEY', 'FOREIGN KEY', 'CHECK', 'DEFAULT'], 0),
+  q('Pre-Assessment', null, 'Keys', 'Medium', 'What is a FOREIGN KEY used for?', ['To establish a link and enforce referential integrity between two tables', 'To encrypt sensitive columns', 'To sort rows automatically', 'To make columns auto-increment'], 0),
+  q('Pre-Assessment', null, 'Basic Querying', 'Easy', 'Which SQL clause is used to filter records based on a condition?', ['WHERE', 'ORDER BY', 'GROUP BY', 'HAVING'], 0),
+  q('Pre-Assessment', null, 'Basic Querying', 'Easy', 'Which SQL command extracts all columns from a table named "Employees"?', ['SELECT * FROM Employees;', 'GET ALL FROM Employees;', 'EXTRACT * IN Employees;', 'SHOW Employees;'], 0),
+  q('Pre-Assessment', null, 'DML', 'Easy', 'Which SQL statement adds new rows of data into a table?', ['INSERT INTO', 'ADD ROW', 'UPDATE', 'CREATE ROW'], 0),
+  q('Pre-Assessment', null, 'DML', 'Easy', 'Which SQL statement modifies existing records in a table?', ['UPDATE', 'ALTER', 'MODIFY', 'CHANGE'], 0),
+  q('Pre-Assessment', null, 'Sorting', 'Easy', 'Which clause is used to sort query result sets in ascending or descending order?', ['ORDER BY', 'SORT BY', 'ARRANGE BY', 'GROUP BY'], 0),
+  q('Pre-Assessment', null, 'Aggregations', 'Easy', 'Which aggregate function returns the total number of rows matching a criteria?', ['COUNT()', 'SUM()', 'TOTAL()', 'NUMBER()'], 0),
+  q('Day-wise Test', 1, 'DDL', 'Easy', 'Which command creates a new table in SQL?', ['CREATE TABLE', 'NEW TABLE', 'BUILD TABLE', 'MAKE TABLE'], 0),
+  q('Day-wise Test', 1, 'DDL', 'Easy', 'Which SQL statement deletes an entire table and its structure permanently?', ['DROP TABLE', 'DELETE TABLE', 'REMOVE TABLE', 'CLEAR TABLE'], 0),
+  q('Day-wise Test', 1, 'DDL', 'Medium', 'What is the difference between DROP TABLE and TRUNCATE TABLE?', ['DROP removes the table structure and data; TRUNCATE removes only data rows', 'TRUNCATE removes the table structure; DROP removes data', 'They are exact synonyms', 'TRUNCATE only works on temporary tables'], 0),
+  q('Day-wise Test', 1, 'ALTER TABLE', 'Medium', 'Which command adds a new column "email" to an existing table "Students"?', ['ALTER TABLE Students ADD email VARCHAR(100);', 'UPDATE TABLE Students ADD COLUMN email;', 'MODIFY Students INSERT email;', 'CHANGE TABLE Students ADD email;'], 0),
+  q('Day-wise Test', 1, 'Constraints', 'Easy', 'Which constraint ensures that a column cannot have NULL values?', ['NOT NULL', 'NO NULL', 'REQUIRED', 'NON_EMPTY'], 0),
+  q('Day-wise Test', 1, 'Constraints', 'Medium', 'Which constraint ensures that all values in a column are distinct from one another?', ['UNIQUE', 'DISTINCT', 'EXCLUSIVE', 'DIFFERENT'], 0),
+  q('Day-wise Test', 1, 'Constraints', 'Medium', 'Which constraint limits the value range that can be placed in a column?', ['CHECK', 'VALIDATE', 'LIMIT', 'BOUND'], 0),
+  q('Day-wise Test', 1, 'Data Types', 'Easy', 'Which data type is best suited for storing variable-length character text up to 255 chars?', ['VARCHAR(255)', 'CHAR(255)', 'TEXT_INT', 'BLOB'], 0),
+  q('Day-wise Test', 1, 'Data Types', 'Medium', 'What is the difference between CHAR(10) and VARCHAR(10)?', ['CHAR is fixed-length and right-pads with spaces; VARCHAR is variable-length', 'VARCHAR is fixed-length; CHAR is variable', 'CHAR only stores numbers', 'VARCHAR cannot exceed 5 characters'], 0),
+  q('Day-wise Test', 1, 'Constraints', 'Hard', 'What does the ON DELETE CASCADE constraint do on a foreign key?', ['Automatically deletes child rows when the referenced parent row is deleted', 'Blocks the deletion of the parent row', 'Sets child foreign keys to NULL', 'Sends an alert to the administrator'], 0),
+  q('Day-wise Test', 2, 'DISTINCT', 'Easy', 'Which SQL keyword removes duplicate rows from the query result set?', ['DISTINCT', 'UNIQUE', 'DIFFERENT', 'NO_DUPLICATE'], 0),
+  q('Day-wise Test', 2, 'Wildcards', 'Easy', 'In a LIKE clause, which wildcard character matches any sequence of zero or more characters?', ['%', '_', '*', '?'], 0),
+  q('Day-wise Test', 2, 'Wildcards', 'Medium', 'In a LIKE clause, which wildcard matches exactly one single character?', ['_', '%', '?', '#'], 0),
+  q('Day-wise Test', 2, 'Filtering', 'Easy', 'Which operator tests if a column value matches any value in a specified list?', ['IN', 'BETWEEN', 'EXISTS', 'LIKE'], 0),
+  q('Day-wise Test', 2, 'Filtering', 'Easy', 'Which operator tests whether a value falls within an inclusive range?', ['BETWEEN', 'IN', 'WITHIN', 'RANGE'], 0),
+  q('Day-wise Test', 2, 'NULL Handling', 'Medium', 'How do you check for a missing value in SQL?', ['WHERE column_name IS NULL', 'WHERE column_name = NULL', 'WHERE column_name == NULL', 'WHERE column_name IS BLANK'], 0),
+  q('Day-wise Test', 2, 'Sorting', 'Easy', 'What is the default sort direction in an ORDER BY clause if not specified?', ['ASC (Ascending)', 'DESC (Descending)', 'Random', 'Insertion order'], 0),
+  q('Day-wise Test', 2, 'Limiting', 'Easy', 'Which clause restricts the number of returned rows in MySQL and PostgreSQL?', ['LIMIT', 'TOP', 'FETCH_COUNT', 'RESTRICT'], 0),
+  q('Day-wise Test', 2, 'Logical Operators', 'Medium', 'In SQL evaluation order, which operator takes precedence between AND and OR without parentheses?', ['AND takes precedence over OR', 'OR takes precedence over AND', 'Evaluated strictly left to right', 'They have identical precedence'], 0),
+  q('Day-wise Test', 2, 'Aliasing', 'Easy', 'Which keyword provides a temporary alias name for a column or table?', ['AS', 'ALIAS', 'NAMED', 'TO'], 0),
+  q('Day-wise Test', 3, 'Aggregations', 'Easy', 'Which aggregate function computes the mathematical average of a numeric column?', ['AVG()', 'MEAN()', 'AVERAGE()', 'MEDIAN()'], 0),
+  q('Day-wise Test', 3, 'Aggregations', 'Easy', 'Which aggregate function finds the highest value in a column?', ['MAX()', 'HIGH()', 'TOP()', 'GREATEST()'], 0),
+  q('Day-wise Test', 3, 'Aggregations', 'Medium', 'What does COUNT(column_name) do compared to COUNT(*)?', ['COUNT(col) ignores NULL values in that column; COUNT(*) counts all rows', 'COUNT(*) ignores NULLs', 'They are exact aliases always', 'COUNT(col) only counts numbers'], 0),
+  q('Day-wise Test', 3, 'GROUP BY', 'Medium', 'What is the purpose of the GROUP BY clause?', ['Groups rows that have the same values into summary rows', 'Sorts rows alphabetically', 'Filters individual rows before aggregation', 'Eliminates table joins'], 0),
+  q('Day-wise Test', 3, 'HAVING', 'Hard', 'What is the fundamental difference between WHERE and HAVING?', ['WHERE filters individual rows before grouping; HAVING filters aggregated groups', 'HAVING filters rows before grouping; WHERE filters aggregated groups', 'WHERE can only be used with numbers', 'HAVING cannot be used with GROUP BY'], 0),
+  q('Day-wise Test', 3, 'GROUP BY Rules', 'Hard', 'If a query contains a GROUP BY department clause, what columns can be in the SELECT list?', ['Columns in the GROUP BY clause or aggregate functions', 'Any column from the table arbitrarily', 'Only primary key columns', 'Only numeric columns'], 0),
+  q('Day-wise Test', 3, 'Aggregations', 'Medium', 'What does SUM(price) return if all rows in the price column are NULL?', ['NULL', '0', 'Error', 'NaN'], 0),
+  q('Day-wise Test', 3, 'Aggregations', 'Medium', 'How do you count the number of unique departments in an Employees table?', ['SELECT COUNT(DISTINCT department) FROM Employees;', 'SELECT DISTINCT COUNT(department) FROM Employees;', 'SELECT COUNT(UNIQUE department) FROM Employees;', 'SELECT SUM(department) FROM Employees;'], 0),
+  q('Day-wise Test', 3, 'HAVING', 'Medium', 'Which clause can filter groups to show only departments with more than 10 employees?', ['HAVING COUNT(*) > 10', 'WHERE COUNT(*) > 10', 'GROUP BY COUNT(*) > 10', 'LIMIT 10'], 0),
+  q('Day-wise Test', 3, 'Formatting', 'Easy', 'Which function rounds a floating point number to 2 decimal places in SQL?', ['ROUND(val, 2)', 'TRUNC(val, 2)', 'CEIL(val, 2)', 'FLOOR(val, 2)'], 0),
+  q('Day-wise Test', 4, 'INNER JOIN', 'Easy', 'What does an INNER JOIN return?', ['Only rows that have matching values in both tables', 'All rows from both tables regardless of match', 'All rows from the left table and matched rows from right', 'A Cartesian product of all rows'], 0),
+  q('Day-wise Test', 4, 'LEFT JOIN', 'Medium', 'What does a LEFT (OUTER) JOIN return?', ['All rows from the left table, and matched rows from the right table (NULL if no match)', 'Only matching rows from both tables', 'All rows from the right table only', 'Rows that have no match in either table'], 0),
+  q('Day-wise Test', 4, 'RIGHT JOIN', 'Medium', 'What does a RIGHT (OUTER) JOIN return?', ['All rows from the right table, and matched rows from the left table (NULL if no match)', 'All rows from the left table only', 'Only rows with non-null foreign keys', 'A cross product'], 0),
+  q('Day-wise Test', 4, 'FULL JOIN', 'Hard', 'What does a FULL OUTER JOIN return?', ['All rows when there is a match in either left or right table, filling non-matches with NULL', 'Only rows where both keys are equal', 'An intersection of tables', 'An empty set if one table has nulls'], 0),
+  q('Day-wise Test', 4, 'Join Condition', 'Easy', 'Which keyword specifies the matching column condition in a JOIN?', ['ON', 'WHERE', 'USING_KEY', 'LINK'], 0),
+  q('Day-wise Test', 4, 'CROSS JOIN', 'Medium', 'What is the result of a CROSS JOIN between a table with 5 rows and a table with 10 rows?', ['50 rows (Cartesian product)', '15 rows', '5 rows', '10 rows'], 0),
+  q('Day-wise Test', 4, 'Self Join', 'Hard', 'What is a Self Join?', ['A regular join where a table is joined with itself using table aliases', 'A join that runs without an ON condition', 'A join between two databases', 'A recursive stored procedure'], 0),
+  q('Day-wise Test', 4, 'Anti-Join', 'Hard', 'How do you find customers who have NEVER placed an order using a LEFT JOIN?', ['LEFT JOIN Orders ON ... WHERE Orders.customer_id IS NULL', 'INNER JOIN Orders ON ... WHERE Orders.id = 0', 'RIGHT JOIN Orders ON ... WHERE Orders.id IS NOT NULL', 'CROSS JOIN Orders'], 0),
+  q('Day-wise Test', 4, 'Multiple Joins', 'Medium', 'Can a single SQL query join 3 or more tables together?', ['Yes, by chaining multiple JOIN ... ON clauses', 'No, SQL only permits joining two tables at once', 'Only if using subqueries', 'Only with UNION'], 0),
+  q('Day-wise Test', 4, 'Performance', 'Hard', 'What database object significantly accelerates JOIN lookup performance on foreign keys?', ['An Index', 'A Trigger', 'A View', 'A Cursor'], 0),
+  q('Day-wise Test', 5, 'Subqueries', 'Easy', 'A subquery in SQL is best defined as:', ['A query nested inside another SELECT, INSERT, UPDATE, or DELETE query', 'A temporary database table on disk', 'A backup query script', 'A stored function in C'], 0),
+  q('Day-wise Test', 5, 'Subqueries', 'Medium', 'What is a scalar subquery?', ['A subquery that returns exactly one single value (one row, one column)', 'A subquery that returns a full table', 'A subquery with no WHERE clause', 'A subquery that runs once per row'], 0),
+  q('Day-wise Test', 5, 'Correlated Subqueries', 'Hard', 'What characterizes a correlated subquery?', ['It references columns from the outer query and executes once for every outer row', 'It runs independently before the outer query', 'It cannot use aggregate functions', 'It modifies database schemas'], 0),
+  q('Day-wise Test', 5, 'EXISTS', 'Medium', 'What does the EXISTS operator test?', ['Whether a subquery returns at least one row of data', 'Whether a table exists in the schema', 'Whether a column has unique values', 'Whether a value is not null'], 0),
+  q('Day-wise Test', 5, 'UNION', 'Medium', 'What is the difference between UNION and UNION ALL?', ['UNION eliminates duplicate rows; UNION ALL retains all rows including duplicates', 'UNION ALL eliminates duplicates; UNION retains them', 'UNION is for tables with different columns', 'UNION ALL sorts results automatically'], 0),
+  q('Day-wise Test', 5, 'UNION Requirements', 'Medium', 'What requirement must be met to combine results with UNION?', ['Both queries must have the same number of columns with compatible data types', 'Both queries must query the exact same table', 'Both queries must have an ORDER BY clause', 'Both queries must return primary keys'], 0),
+  q('Day-wise Test', 5, 'CASE WHEN', 'Easy', 'Which SQL statement provides conditional if-then-else logic within a query?', ['CASE WHEN ... THEN ... ELSE ... END', 'IF ... THEN ... ELSE', 'IIF(condition, true, false) only', 'SWITCH ... CASE'], 0),
+  q('Day-wise Test', 5, 'Views', 'Medium', 'What is a database View?', ['A virtual table based on the result-set of a stored SQL statement', 'A physical copy of table data on SSD', 'A graphical chart in the database GUI', 'A query performance monitor'], 0),
+  q('Day-wise Test', 5, 'CTEs', 'Hard', 'What keyword defines a Common Table Expression (CTE) in SQL?', ['WITH', 'CTE', 'TEMP', 'DEFINE'], 0),
+  q('Day-wise Test', 5, 'Window Functions', 'Hard', 'Which clause is required to define the partitioning and ordering of a window function like ROW_NUMBER()?', ['OVER()', 'PARTITION()', 'WINDOW()', 'APPLY()'], 0),
+  q('Day-wise Test', 6, 'UPDATE', 'Easy', 'What happens if you execute an UPDATE statement without a WHERE clause?', ['All rows in the table are updated with the new value', 'Only the first row is updated', 'The database aborts with a syntax error', 'No rows are updated'], 0),
+  q('Day-wise Test', 6, 'DELETE', 'Easy', 'What happens if you run DELETE FROM Employees; without a WHERE clause?', ['All records are deleted from the table, but the table structure remains', 'The table structure is dropped', 'Only inactive employees are deleted', 'A rollback occurs automatically'], 0),
+  q('Day-wise Test', 6, 'Transactions', 'Easy', 'Which command permanently saves all changes made in the current transaction?', ['COMMIT', 'SAVE', 'APPLY', 'CONFIRM'], 0),
+  q('Day-wise Test', 6, 'Transactions', 'Easy', 'Which command undoes all changes made in the current uncommitted transaction?', ['ROLLBACK', 'UNDO', 'REVERT', 'CANCEL'], 0),
+  q('Day-wise Test', 6, 'ACID', 'Medium', 'What does ACID stand for in relational database transactions?', ['Atomicity, Consistency, Isolation, Durability', 'Access, Control, Indexing, Data', 'Action, Command, Interface, Domain', 'Accuracy, Concurrency, Integrity, Delivery'], 0),
+  q('Day-wise Test', 6, 'ACID - Atomicity', 'Medium', 'What does the "Atomicity" property of transactions guarantee?', ['All operations in a transaction succeed completely, or none are applied (all-or-nothing)', 'Data is stored without redundancy', 'Transactions execute simultaneously without interference', 'Committed data survives system crashes'], 0),
+  q('Day-wise Test', 6, 'ACID - Durability', 'Medium', 'What does "Durability" guarantee in ACID?', ['Once a transaction is committed, its changes survive power loss or system failure', 'The database will never run out of disk space', 'Tables cannot be dropped', 'Queries run in under 1 second'], 0),
+  q('Day-wise Test', 6, 'Indexes', 'Medium', 'What is the primary drawback of having too many indexes on a database table?', ['Slows down write operations (INSERT, UPDATE, DELETE) and consumes extra storage', 'Slows down SELECT queries', 'Limits the table to 100 rows', 'Causes data corruption'], 0),
+  q('Day-wise Test', 6, 'NULL Functions', 'Medium', 'Which standard SQL function returns the first non-null argument in its list?', ['COALESCE()', 'IFNULL()', 'NVL()', 'ISNULL()'], 0),
+  q('Day-wise Test', 6, 'Data Integrity', 'Hard', 'What is Referential Integrity?', ['Ensuring that foreign key values always correspond to an existing primary key in the referenced table', 'Preventing duplicate primary keys', 'Ensuring numeric values are within bounds', 'Encrypting passwords in tables'], 0),
+  q('Grand Test', null, 'Query Evaluation', 'Hard', 'What is the logical processing order of clauses in a standard SQL SELECT query?', ['FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY -> LIMIT', 'SELECT -> FROM -> WHERE -> GROUP BY -> HAVING -> ORDER BY', 'WHERE -> FROM -> SELECT -> GROUP BY -> ORDER BY', 'FROM -> SELECT -> WHERE -> HAVING -> ORDER BY'], 0),
+  q('Grand Test', null, 'Keys', 'Medium', 'Can a database table have more than one PRIMARY KEY?', ['No, a table can only have one primary key (though it can be composite across multiple columns)', 'Yes, up to 5 primary keys', 'Yes, one for each foreign key', 'Yes, if columns are numbers'], 0),
+  q('Grand Test', null, 'Joins', 'Medium', 'Which join returns all rows from table A and only matching rows from table B?', ['LEFT JOIN', 'INNER JOIN', 'RIGHT JOIN', 'CROSS JOIN'], 0),
+  q('Grand Test', null, 'Aggregations', 'Medium', 'Can aggregate functions like MAX() or AVG() be placed directly in a WHERE clause?', ['No, aggregate conditions must be placed in a HAVING clause or subquery', 'Yes, anytime', 'Only if the table has no NULLs', 'Only with integers'], 0),
+  q('Grand Test', null, 'Constraints', 'Medium', 'What does the DEFAULT constraint do?', ['Provides a fallback value for a column when no value is supplied during INSERT', 'Forces the user to type a value', 'Makes a column a primary key', 'Sorts column data'], 0),
+  q('Grand Test', null, 'Transactions', 'Medium', 'What isolation problem occurs when a transaction reads uncommitted changes from another transaction?', ['Dirty Read', 'Non-repeatable Read', 'Phantom Read', 'Deadlock'], 0),
+  q('Grand Test', null, 'Indexing', 'Medium', 'Which data structure is most commonly used by relational databases for indexing columns?', ['B-Tree / B+ Tree', 'Linked List', 'Stack', 'Graph'], 0),
+  q('Grand Test', null, 'String Functions', 'Easy', 'Which function combines two or more strings together in SQL?', ['CONCAT()', 'COMBINE()', 'JOIN()', 'MERGE()'], 0),
+  q('Grand Test', null, 'Subqueries', 'Medium', 'Which clause is used with subqueries to check if an inner query returns any rows?', ['EXISTS', 'IN_SET', 'HAS_ROWS', 'FOUND'], 0),
+  q('Grand Test', null, 'Normalization', 'Hard', 'What is the primary goal of Database Normalization (1NF, 2NF, 3NF)?', ['To minimize data redundancy and prevent insertion, update, and deletion anomalies', 'To speed up full table scans', 'To create more foreign key constraints', 'To encrypt columns'], 0),
+]
+
+// ---------------------------------------------------------------------------
+// 6. MACHINE LEARNING & ARTIFICIAL INTELLIGENCE
+// ---------------------------------------------------------------------------
+export const mlQuestions = [
+  q('Pre-Assessment', null, 'ML Foundations', 'Easy', 'What distinguishes Machine Learning from traditional rule-based programming?', ['ML learns patterns from data rather than following manually coded static rules', 'ML only runs on quantum computers', 'ML does not require mathematical calculations', 'ML replaces operating systems'], 0),
+  q('Pre-Assessment', null, 'Learning Paradigms', 'Easy', 'Which type of learning trains a model using labeled input-output pairs?', ['Supervised Learning', 'Unsupervised Learning', 'Reinforcement Learning', 'Self-Supervised Learning'], 0),
+  q('Pre-Assessment', null, 'Learning Paradigms', 'Easy', 'Clustering customer purchase history into segments without target labels is an example of:', ['Unsupervised Learning', 'Supervised Learning', 'Regression', 'Reinforcement Learning'], 0),
+  q('Pre-Assessment', null, 'Tasks', 'Easy', 'Predicting a continuous numerical value (such as house price) is known as:', ['Regression', 'Classification', 'Clustering', 'Dimensionality Reduction'], 0),
+  q('Pre-Assessment', null, 'Tasks', 'Easy', 'Classifying an email as "Spam" or "Not Spam" is an example of:', ['Binary Classification', 'Linear Regression', 'Clustering', 'Dimensionality Reduction'], 0),
+  q('Pre-Assessment', null, 'Data Split', 'Medium', 'Why is data split into Training and Testing sets?', ['To evaluate model generalization on unseen data and prevent overfitting', 'To fit memory limits of the GPU', 'Because scikit-learn requires 2 files', 'To double the dataset size'], 0),
+  q('Pre-Assessment', null, 'Model Performance', 'Medium', 'What does it mean when a model performs exceptionally well on training data but poorly on test data?', ['The model is overfitting', 'The model is underfitting', 'The model has high bias', 'The learning rate is too low'], 0),
+  q('Pre-Assessment', null, 'Features', 'Easy', 'In a dataset used to predict car prices, mileage and engine size are called:', ['Features (independent variables)', 'Labels (dependent variables)', 'Hyperparameters', 'Loss functions'], 0),
+  q('Pre-Assessment', null, 'Metrics', 'Medium', 'Which metric calculates the proportion of correct predictions over total predictions?', ['Accuracy', 'Mean Squared Error', 'Log Loss', 'Silhouette Score'], 0),
+  q('Pre-Assessment', null, 'Deep Learning', 'Easy', 'Which architectural structure inspired Artificial Neural Networks (ANN)?', ['Biological neurons in the human brain', 'Relational database schemas', 'Binary search trees', 'Quantum bits'], 0),
+  q('Day-wise Test', 1, 'Data Cleaning', 'Easy', 'Which library is standard in Python for data manipulation in ML pipelines?', ['Pandas', 'Flask', 'Django', 'Requests'], 0),
+  q('Day-wise Test', 1, 'Encoding', 'Medium', 'What encoding technique converts categorical categories like ["Red", "Green", "Blue"] into binary columns?', ['One-Hot Encoding', 'Ordinal Encoding', 'Hash Scaling', 'Min-Max Normalization'], 0),
+  q('Day-wise Test', 1, 'Feature Scaling', 'Medium', 'What does StandardScaler do to a feature column?', ['Scales data to have a mean of 0 and standard deviation of 1', 'Scales all values strictly between 0 and 1', 'Replaces negative numbers with zeros', 'Removes duplicate records'], 0),
+  q('Day-wise Test', 1, 'Feature Scaling', 'Medium', 'What does MinMaxScaler do to feature values?', ['Rescales values to a specified range, typically [0, 1]', 'Standardizes values with zero mean', 'Rounds values to integers', 'Converts text into numbers'], 0),
+  q('Day-wise Test', 1, 'Data Leakage', 'Hard', 'Why must feature scalers (like StandardScaler) be fit ONLY on the training set and not on the whole dataset?', ['To prevent data leakage from the test set into the model training process', 'Because scikit-learn throws an error otherwise', 'It makes training 10x slower', 'Test data cannot be scaled'], 0),
+  q('Day-wise Test', 1, 'Missing Values', 'Easy', 'Replacing missing values with the column mean or median is called:', ['Imputation', 'Normalization', 'Discretization', 'Vectorization'], 0),
+  q('Day-wise Test', 1, 'Outliers', 'Medium', 'Which visual plot is most commonly used to detect statistical outliers in a feature distribution?', ['Box Plot', 'Line Chart', 'Pie Chart', 'Heatmap'], 0),
+  q('Day-wise Test', 1, 'Train-Test Split', 'Easy', 'Which scikit-learn function splits arrays into random train and test subsets?', ['train_test_split()', 'split_data()', 'kfold_split()', 'make_train_test()'], 0),
+  q('Day-wise Test', 1, 'Feature Selection', 'Medium', 'What is the curse of dimensionality?', ['Problems that arise when analyzing data in high-dimensional spaces as data becomes sparse', 'An error in 3D plotting', 'Running out of GPU memory', 'Negative weights in neural networks'], 0),
+  q('Day-wise Test', 1, 'EDA', 'Easy', 'What does EDA stand for in the machine learning workflow?', ['Exploratory Data Analysis', 'Essential Data Algorithm', 'Estimated Deviation Assessment', 'External Dataset Application'], 0),
+  q('Day-wise Test', 2, 'Linear Regression', 'Easy', 'In simple linear regression y = mx + c, what does m represent?', ['The slope (weight/coefficient) of the regression line', 'The y-intercept', 'The prediction error', 'The target variable'], 0),
+  q('Day-wise Test', 2, 'Cost Function', 'Medium', 'Which cost function is minimized in ordinary least squares (OLS) linear regression?', ['Mean Squared Error (MSE)', 'Cross-Entropy Loss', 'Hinge Loss', 'Gini Impurity'], 0),
+  q('Day-wise Test', 2, 'Optimization', 'Medium', 'Which iterative algorithm updates model weights in the direction of steepest descent to minimize loss?', ['Gradient Descent', 'K-Means', 'Genetic Algorithm', 'Forward Propagation'], 0),
+  q('Day-wise Test', 2, 'Hyperparameters', 'Medium', 'In Gradient Descent, what does the learning rate (alpha) control?', ['The step size taken at each iteration towards the minimum of the loss function', 'The number of features used', 'The size of the train/test split', 'The number of trees in a forest'], 0),
+  q('Day-wise Test', 2, 'Evaluation', 'Medium', 'What does an R-squared (R2) score of 1.0 indicate?', ['The model explains 100% of the variance in the target variable', 'The model has 100% error', 'The model predicts only zero', 'The data has negative correlation'], 0),
+  q('Day-wise Test', 2, 'Evaluation', 'Medium', 'What is the primary difference between MAE and MSE?', ['MSE penalizes larger errors more heavily because errors are squared', 'MAE penalizes larger errors more heavily', 'MSE is always in the same units as the target variable', 'MAE can only be used for classification'], 0),
+  q('Day-wise Test', 2, 'Evaluation', 'Easy', 'What is RMSE (Root Mean Squared Error)?', ['The square root of Mean Squared Error, returning errors to original target units', 'The sum of all absolute residuals', 'The ratio of false positives to true positives', 'The variance of input features'], 0),
+  q('Day-wise Test', 2, 'Regularization', 'Hard', 'What is Ridge Regression (L2 Regularization)?', ['Regression that adds a penalty equal to the square of the magnitude of coefficients to prevent overfitting', 'Regression that sets coefficients exactly to zero', 'Classification using logistic sigmoid', 'Clustering algorithm'], 0),
+  q('Day-wise Test', 2, 'Regularization', 'Hard', 'What is Lasso Regression (L1 Regularization) uniquely capable of doing?', ['Driving uninformative feature coefficients exactly to zero, performing automatic feature selection', 'Doubling the number of features', 'Fitting non-linear curves without parameters', 'Handling missing data automatically'], 0),
+  q('Day-wise Test', 2, 'Assumptions', 'Medium', 'Which of the following is an assumption of Linear Regression?', ['Linear relationship between independent features and target variable', 'Features must follow a Poisson distribution', 'Target variable must be binary categorical', 'Features cannot be continuous'], 0),
+  q('Day-wise Test', 3, 'Logistic Regression', 'Medium', 'Despite its name, what task is Logistic Regression used for?', ['Classification', 'Continuous regression', 'Clustering', 'Dimensionality reduction'], 0),
+  q('Day-wise Test', 3, 'Sigmoid Function', 'Medium', 'What does the Sigmoid activation function do to any real-valued number?', ['Maps it to a probability value strictly between 0 and 1', 'Maps it to -1 and +1', 'Rounds it to the nearest integer', 'Calculates its natural logarithm'], 0),
+  q('Day-wise Test', 3, 'Decision Threshold', 'Easy', 'What is the default classification probability threshold in binary Logistic Regression?', ['0.5', '1.0', '0.0', '0.75'], 0),
+  q('Day-wise Test', 3, 'Decision Trees', 'Easy', 'In a Decision Tree, what is the top-most node called?', ['Root node', 'Leaf node', 'Branch node', 'Child node'], 0),
+  q('Day-wise Test', 3, 'Decision Trees', 'Easy', 'In a Decision Tree, what are the terminal nodes that hold final predictions called?', ['Leaf nodes', 'Root nodes', 'Interior nodes', 'Pruning nodes'], 0),
+  q('Day-wise Test', 3, 'Splitting Criteria', 'Medium', 'Which metric measures the impurity or disorder of a set of samples in Decision Trees?', ['Gini Impurity (or Entropy)', 'Mean Squared Error', 'R-squared', 'Cosine Similarity'], 0),
+  q('Day-wise Test', 3, 'Overfitting', 'Medium', 'Why are unconstrained Decision Trees prone to overfitting?', ['They can grow deep enough to memorize every training instance including noise', 'They cannot split on continuous values', 'They only use linear decision boundaries', 'They require high learning rates'], 0),
+  q('Day-wise Test', 3, 'Pruning', 'Hard', 'What is tree pruning in Decision Trees?', ['Removing branches that provide little predictive power to reduce overfitting', 'Adding more trees to the ensemble', 'Converting decision trees into neural networks', 'Deleting missing values in data'], 0),
+  q('Day-wise Test', 3, 'KNN', 'Medium', 'How does the K-Nearest Neighbors (KNN) algorithm classify a new data point?', ['By taking a majority vote among the K closest training points in feature space', 'By fitting a linear hyperplane', 'By calculating decision tree splits', 'By training neural weights'], 0),
+  q('Day-wise Test', 3, 'KNN Distance', 'Easy', 'What distance metric is most commonly used in KNN for continuous variables?', ['Euclidean distance', 'Hamming distance', 'Jaccard distance', 'Levenshtein distance'], 0),
+  q('Day-wise Test', 4, 'Confusion Matrix', 'Easy', 'In a binary Confusion Matrix, what does a "True Positive" (TP) represent?', ['A positive instance correctly predicted as positive by the model', 'A negative instance predicted as positive', 'A positive instance predicted as negative', 'A negative instance predicted as negative'], 0),
+  q('Day-wise Test', 4, 'Precision', 'Medium', 'What does Precision measure?', ['Out of all instances predicted as positive, how many were actually positive (TP / [TP + FP])', 'Out of all actual positives, how many were correctly detected', 'Total correct predictions divided by all predictions', 'The ratio of false positives to true negatives'], 0),
+  q('Day-wise Test', 4, 'Recall', 'Medium', 'What does Recall (Sensitivity) measure?', ['Out of all actual positive instances, how many were correctly identified by the model (TP / [TP + FN])', 'Out of all predicted positives, how many were correct', 'The overall accuracy of the classifier', 'The area under the precision curve'], 0),
+  q('Day-wise Test', 4, 'F1-Score', 'Medium', 'What is the F1-Score?', ['The harmonic mean of Precision and Recall', 'The arithmetic average of True Positives and True Negatives', 'The square root of accuracy', 'The difference between sensitivity and specificity'], 0),
+  q('Day-wise Test', 4, 'Imbalanced Data', 'Hard', 'Why is Accuracy a misleading metric on severely imbalanced datasets (e.g., 99% non-fraud, 1% fraud)?', ['A trivial model predicting "not-fraud" for everything achieves 99% accuracy while detecting 0 fraud', 'Accuracy cannot be calculated on binary classes', 'Accuracy always equals 0 on imbalanced data', 'Scikit-learn cannot compute accuracy for imbalanced sets'], 0),
+  q('Day-wise Test', 4, 'ROC-AUC', 'Hard', 'What does the ROC curve plot against each other at various classification thresholds?', ['True Positive Rate (Recall) vs False Positive Rate', 'Precision vs Recall', 'Training Error vs Validation Error', 'Accuracy vs F1-score'], 0),
+  q('Day-wise Test', 4, 'Cross Validation', 'Medium', 'What is K-Fold Cross Validation?', ['Splitting data into K subsets, training on K-1 folds and validating on the remaining fold K times', 'Training K different algorithms on the same dataset', 'Repeating train/test split K times with replacement', 'Splitting features into K clusters'], 0),
+  q('Day-wise Test', 4, 'Bias-Variance', 'Hard', 'What does High Bias in a model typically indicate?', ['Underfitting (the model is too simple to capture the underlying pattern)', 'Overfitting (the model captures noise)', 'Zero training error', 'Perfect generalization'], 0),
+  q('Day-wise Test', 4, 'Bias-Variance', 'Hard', 'What does High Variance in a model typically indicate?', ['Overfitting (the model is sensitive to small fluctuations in training data)', 'Underfitting', 'The model has too few parameters', 'High bias and low complexity'], 0),
+  q('Day-wise Test', 4, 'Stratified Split', 'Medium', 'Why is StratifiedKFold preferred for classification tasks?', ['It preserves the percentage of samples for each class in every fold', 'It runs K times faster than regular K-Fold', 'It scales features automatically', 'It eliminates outliers'], 0),
+  q('Day-wise Test', 5, 'Clustering', 'Easy', 'What is the primary objective of clustering algorithms?', ['Grouping similar data points together without predefined labels', 'Predicting a continuous target score', 'Mapping inputs to known class names', 'Sorting numbers in a database'], 0),
+  q('Day-wise Test', 5, 'K-Means', 'Easy', 'In K-Means clustering, what does K represent?', ['The predefined number of clusters to form', 'The number of features in the dataset', 'The number of iterations to run', 'The distance metric value'], 0),
+  q('Day-wise Test', 5, 'K-Means', 'Medium', 'What is a cluster centroid in K-Means?', ['The arithmetic mean position of all data points belonging to that cluster', 'The outermost point of a cluster', 'The initial random outlier', 'The boundary line separating clusters'], 0),
+  q('Day-wise Test', 5, 'Optimal K', 'Medium', 'What visual technique plots inertia (within-cluster sum of squares) against K to find the optimal number of clusters?', ['The Elbow Method', 'The Silhouette Curve', 'The ROC Plot', 'The Box Plot'], 0),
+  q('Day-wise Test', 5, 'Inertia', 'Hard', 'What does inertia measure in K-Means clustering?', ['The sum of squared distances of samples to their closest cluster center', 'The distance between different cluster centers', 'The time taken to converge', 'The number of outliers removed'], 0),
+  q('Day-wise Test', 5, 'Silhouette Score', 'Hard', 'What does a Silhouette Score close to +1 indicate for a data point?', ['The point is well matched to its own cluster and poorly matched to neighboring clusters', 'The point is right on the decision boundary', 'The point has been assigned to the wrong cluster', 'The clustering failed completely'], 0),
+  q('Day-wise Test', 5, 'PCA', 'Medium', 'What is the primary purpose of Principal Component Analysis (PCA)?', ['Dimensionality reduction while preserving as much variance as possible', 'Classification of high-dimensional vectors', 'Clustering data into K groups', 'Replacing missing values'], 0),
+  q('Day-wise Test', 5, 'PCA', 'Hard', 'Principal Components generated by PCA are:', ['Orthogonal (uncorrelated) linear combinations of the original features', 'Exact subsets of original features', 'Non-linear polynomial curves', 'Binary cluster labels'], 0),
+  q('Day-wise Test', 5, 'Hierarchical Clustering', 'Medium', 'What tree-like diagram represents the nested clusters in Hierarchical Clustering?', ['Dendrogram', 'Histogram', 'Scatter plot', 'Correlogram'], 0),
+  q('Day-wise Test', 5, 'Feature Scaling in Clustering', 'Hard', 'Why is feature scaling essential before running K-Means clustering?', ['Because distance calculations are dominated by features with arbitrarily larger numerical scales', 'Because K-Means cannot compute distances on floats', 'To convert features into integers', 'To remove negative numbers'], 0),
+  q('Day-wise Test', 6, 'Ensembles', 'Easy', 'What is the core idea behind Ensemble Learning in ML?', ['Combining predictions from multiple models to achieve better accuracy than any single model', 'Using a single very deep decision tree', 'Running algorithms on multiple CPU cores only', 'Replacing data with synthetic values'], 0),
+  q('Day-wise Test', 6, 'Bagging', 'Medium', 'What does Bagging (Bootstrap Aggregating) involve?', ['Training multiple independent base estimators on random subsets of data sampled with replacement', 'Training models sequentially where each corrects previous errors', 'Stacking neural networks on decision trees', 'Compressing models for mobile deployment'], 0),
+  q('Day-wise Test', 6, 'Random Forest', 'Easy', 'What is a Random Forest?', ['An ensemble of decision trees trained with bagging and random feature selection', 'A single large decision tree', 'A clustering algorithm', 'A deep learning convolutional network'], 0),
+  q('Day-wise Test', 6, 'Random Forest', 'Medium', 'Why does Random Forest reduce overfitting compared to an individual Decision Tree?', ['Averaging predictions from decorrelated trees reduces the overall model variance', 'It uses fewer data samples', 'It prunes trees down to 1 level', 'It eliminates feature scaling'], 0),
+  q('Day-wise Test', 6, 'Boosting', 'Hard', 'How does Boosting (e.g., AdaBoost, XGBoost) differ fundamentally from Bagging?', ['Boosting trains trees sequentially, giving higher weights to previously misclassified instances', 'Boosting trains all trees completely in parallel', 'Boosting uses clustering instead of trees', 'Boosting does not use loss functions'], 0),
+  q('Day-wise Test', 6, 'Popular Boosting Libraries', 'Easy', 'Which state-of-the-art gradient boosting library is widely used in competitive ML for tabular data?', ['XGBoost (or LightGBM / CatBoost)', 'TensorFlow-lite', 'NLTK', 'BeautifulSoup'], 0),
+  q('Day-wise Test', 6, 'Hyperparameter Tuning', 'Medium', 'Which scikit-learn class exhaustively tries all parameter combinations across a grid?', ['GridSearchCV', 'RandomizedSearchCV', 'CrossValSearch', 'AutoTuner'], 0),
+  q('Day-wise Test', 6, 'Pipelines', 'Medium', 'What is the purpose of a scikit-learn Pipeline?', ['Chains transformers and estimators together into a unified, reproducible workflow', 'Runs code in separate GPU threads', 'Deploys models to Docker containers automatically', 'Visualizes decision boundaries in 3D'], 0),
+  q('Day-wise Test', 6, 'Model Persistence', 'Easy', 'Which Python module is commonly used to serialize and save trained ML models to disk?', ['joblib (or pickle)', 'json', 'csv', 'sqlite3'], 0),
+  q('Day-wise Test', 6, 'Deployment', 'Medium', 'What does "Model Inference" mean in production?', ['Feeding new live data into a trained model to generate predictions', 'Retraining the model on GPU clusters', 'Hyperparameter tuning with grid search', 'Writing unit tests for code'], 0),
+  q('Grand Test', null, 'ML Foundations', 'Easy', 'Which phase comes first in a typical Machine Learning lifecycle?', ['Problem definition and data collection', 'Model deployment', 'Hyperparameter tuning', 'Ensemble stacking'], 0),
+  q('Grand Test', null, 'Evaluation', 'Medium', 'When minimizing False Negatives is critical (such as cancer diagnosis), which metric should be prioritized?', ['Recall', 'Precision', 'Accuracy', 'Specificity'], 0),
+  q('Grand Test', null, 'Evaluation', 'Medium', 'When minimizing False Positives is critical (such as spam filtering where legitimate emails must not be lost), prioritize:', ['Precision', 'Recall', 'Loss', 'Underfitting'], 0),
+  q('Grand Test', null, 'Regression', 'Medium', 'What problem occurs when independent features in a linear model are highly correlated with each other?', ['Multicollinearity', 'Heteroscedasticity', 'Overfitting', 'Underfitting'], 0),
+  q('Grand Test', null, 'Classification', 'Medium', 'In Support Vector Machines (SVM), what are Support Vectors?', ['The data points closest to the separating hyperplane that influence its orientation and position', 'Weights in a deep neural network', 'Centroids in a cluster', 'Outliers that have been removed'], 0),
+  q('Grand Test', null, 'Deep Learning', 'Easy', 'Which activation function is most widely used in hidden layers of modern Deep Neural Networks?', ['ReLU (Rectified Linear Unit)', 'Step function', 'Linear identity', 'Sine function'], 0),
+  q('Grand Test', null, 'Ethics & Bias', 'Medium', 'What is Algorithmic Bias in Machine Learning models?', ['Systematic discrimination or unfairness in predictions resulting from biased training data', 'High variance in cross validation', 'A software bug in the python runtime', 'Using an incorrect learning rate'], 0),
+  q('Grand Test', null, 'Feature Engineering', 'Medium', 'Creating new input features from existing variables to improve model predictive power is called:', ['Feature Engineering', 'Dimensionality Reduction', 'Data Cleansing', 'Hyperparameter Optimization'], 0),
+  q('Grand Test', null, 'Unsupervised', 'Hard', 'Which clustering algorithm can identify clusters of arbitrary shapes and distinguish noise/outliers without specifying K?', ['DBSCAN', 'K-Means', 'Linear Regression', 'PCA'], 0),
+  q('Grand Test', null, 'Production ML', 'Medium', 'What is "Data Drift" in machine learning operations (MLOps)?', ['Changes in the statistical distribution of input data over time causing model performance to degrade', 'Corrupted file systems', 'GPU memory leaks', 'Moving databases between cloud providers'], 0),
+]
+
+// ---------------------------------------------------------------------------
+// SUBJECT CATALOG & METADATA
+// ---------------------------------------------------------------------------
+export const SUBJECT_CATALOG = [
+  {
+    id: 'python',
+    name: 'Python for Programming & Data Science',
+    shortName: 'Python',
+    icon: '🐍',
+    badgeClass: 'bg-emerald-100 text-emerald-800',
+    description: 'Python syntax, control flow, functions, OOP, data structures, and NumPy/Pandas data analytics.',
+    questions: pythonQuestions,
+    defaultDays: 6,
+    topics: [
+      'Python Basics, Variables & Operators',
+      'Control Flow, Loops & Comprehensions',
+      'Functions, Scope & Lambda',
+      'Core Data Structures (Lists, Dicts, Sets)',
+      'File I/O, Exceptions & OOP Principles',
+      'Data Analytics with NumPy & Pandas',
+    ],
+  },
+  {
+    id: 'webdev',
+    name: 'Full Stack Web Development',
+    shortName: 'Web Dev',
+    icon: '🌐',
+    badgeClass: 'bg-blue-100 text-blue-800',
+    description: 'Semantic HTML5, CSS Flexbox/Grid, Modern JavaScript ES6+, DOM manipulation, and React web apps.',
+    questions: webdevQuestions,
+    defaultDays: 6,
+    topics: [
+      'HTML5 Semantics, Forms & CSS Layouts (Flexbox/Grid)',
+      'Modern JavaScript (ES6+), Arrow Functions & Destructuring',
+      'DOM Manipulation, Events & Storage APIs',
+      'Asynchronous JS, Promises, Async/Await & REST APIs',
+      'React Fundamentals: JSX, Props & State (useState)',
+      'React Hooks (useEffect), Routing & Modern Build Tools',
+    ],
+  },
+  {
+    id: 'java',
+    name: 'Java Programming & OOP',
+    shortName: 'Java',
+    icon: '☕',
+    badgeClass: 'bg-amber-100 text-amber-800',
+    description: 'Core Java syntax, OOP inheritance/polymorphism, interfaces, exception handling, and collections.',
+    questions: javaQuestions,
+    defaultDays: 6,
+    topics: [
+      'Java Syntax, Data Types, Type Casting & Loops',
+      'Classes, Objects, Constructors & this Keyword',
+      'Inheritance, Polymorphism & Method Overriding',
+      'Encapsulation, Abstract Classes & Interfaces',
+      'Exception Handling, Try-Catch & Strings',
+      'Java Collections Framework (List, Set, Map)',
+    ],
+  },
+  {
+    id: 'sql',
+    name: 'SQL & Relational Databases',
+    shortName: 'SQL / Database',
+    icon: '🗄️',
+    badgeClass: 'bg-indigo-100 text-indigo-800',
+    description: 'Relational data modeling, DDL/DML, querying with joins, grouping/aggregations, subqueries, and ACID.',
+    questions: sqlQuestions,
+    defaultDays: 6,
+    topics: [
+      'RDBMS Foundations, DDL (CREATE/ALTER/DROP) & Constraints',
+      'DQL Querying, Filtering (WHERE/LIKE/IN) & Sorting',
+      'Aggregations (SUM/AVG/COUNT) & GROUP BY / HAVING',
+      'Relational Joins (INNER, LEFT, RIGHT, FULL) & Relationships',
+      'Subqueries, Nested Queries, CTEs & Views',
+      'DML (INSERT/UPDATE/DELETE), Transactions & ACID Properties',
+    ],
+  },
+  {
+    id: 'ml',
+    name: 'Machine Learning & Artificial Intelligence',
+    shortName: 'ML & AI',
+    icon: '🤖',
+    badgeClass: 'bg-purple-100 text-purple-800',
+    description: 'ML lifecycle, data preprocessing, regression, classification, model evaluation, clustering, and ensembles.',
+    questions: mlQuestions,
+    defaultDays: 6,
+    topics: [
+      'ML Foundations, Data Cleaning & Feature Scaling',
+      'Supervised Learning: Linear Regression & Gradient Descent',
+      'Supervised Learning: Logistic Regression & Decision Trees',
+      'Model Evaluation: Confusion Matrix, Precision/Recall & ROC-AUC',
+      'Unsupervised Learning: K-Means Clustering & PCA',
+      'Ensemble Methods (Random Forest, Boosting) & Pipelines',
+    ],
+  },
+  {
+    id: 'excel',
+    name: 'Excel for Data Analytics',
+    shortName: 'Excel',
+    icon: '📊',
+    badgeClass: 'bg-green-100 text-green-800',
+    description: 'Master data analysis, cleaning, advanced formulas, lookup functions, PivotTables, and dashboards in Excel.',
+    questions: excelQuestions,
+    defaultDays: 6,
+    topics: [
+      'Interface, Navigation, Data Types & Tables',
+      'Data Cleaning, Flash Fill, Text Functions & Validation',
+      'Formulas, Logic (IF/AND/OR) & Aggregations (SUMIFS)',
+      'Lookup Functions (VLOOKUP, INDEX-MATCH, XLOOKUP)',
+      'PivotTables, PivotCharts, Slicers & KPI Dashboards',
+      'What-If Analysis, Power Query & Automation',
+    ],
+  },
+]
+
+// ---------------------------------------------------------------------------
+// DYNAMIC SUBJECT DETECTION
+// ---------------------------------------------------------------------------
+export function detectSubjectFromWorkshop(workshop = {}) {
+  const text = `${workshop?.name || ''} ${workshop?.code || ''} ${workshop?.description || ''}`.toLowerCase()
+  if (text.includes('python') || text.includes('py-') || text.includes('pandas') || text.includes('numpy')) return 'python'
+  if (text.includes('web') || text.includes('javascript') || text.includes('react') || text.includes('html') || text.includes('frontend') || text.includes('fullstack') || text.includes('mern') || text.includes('node')) return 'webdev'
+  if (text.includes('java') && !text.includes('javascript')) return 'java'
+  if (text.includes('sql') || text.includes('database') || text.includes('dbms') || text.includes('postgres') || text.includes('mysql') || text.includes('oracle')) return 'sql'
+  if (text.includes('machine learning') || text.includes('deep learning') || text.includes('ai') || text.includes('artificial intelligence') || text.includes('data science')) return 'ml'
+  if (text.includes('excel') || text.includes('spreadsheet') || text.includes('vlookup') || text.includes('pivot')) return 'excel'
+  return 'custom'
+}
+
+// ---------------------------------------------------------------------------
+// DYNAMIC CUSTOM SUBJECT GENERATOR
+// Generates structured, realistic MCQs for ANY custom workshop subject and syllabus.
+// ---------------------------------------------------------------------------
+export function generateCustomQuestions(subjectName, dailyTopics = [], workshop = {}, durationDays = 6) {
+  const days = Math.max(1, Math.min(Number(durationDays) || 6, 30))
+  const cleanSubject = (subjectName || workshop?.name || 'Subject').trim()
+  const wId = workshop?.id || null
+  const wName = workshop?.name || cleanSubject
+  const generated = []
+
+  // Helper generator
+  const makeQ = (testType, dayNum, topic, diff, text, opts, correctIdx) => ({
+    testType,
+    dayNumber: dayNum,
+    topic: topic || `${cleanSubject} Concepts`,
+    unit: testType === 'Day-wise Test' ? `Day ${dayNum}` : testType,
+    difficulty: diff,
+    questionText: text,
+    options: opts,
+    correctAnswer: opts[correctIdx],
+    workshopId: wId,
+    workshopName: wName,
+  })
+
+  // Pre-Assessment: 15 fundamental diagnostic questions
+  for (let i = 1; i <= 15; i++) {
+    generated.push(
+      makeQ(
+        'Pre-Assessment',
+        null,
+        'Foundations & Core Principles',
+        i % 3 === 0 ? 'Hard' : i % 2 === 0 ? 'Medium' : 'Easy',
+        `In ${cleanSubject}, which of the following best represents standard best practice for Core Concept #${i}?`,
+        [
+          `Apply verified standard industry conventions for ${cleanSubject}`,
+          `Bypass syntax validation and execute without parameters`,
+          `Hardcode values directly into the configuration module`,
+          `Omit error handling and boundary condition verification`,
+        ],
+        0,
+      )
+    )
+  }
+
+  // Day-wise Tests: 15 questions per day based on custom syllabus topics
+  for (let d = 1; d <= days; d++) {
+    const topic = dailyTopics[d - 1] || `Day ${d} — ${cleanSubject} Module${d}`
+    for (let k = 1; k <= 15; k++) {
+      generated.push(
+        makeQ(
+          'Day-wise Test',
+          d,
+          topic,
+          k % 3 === 0 ? 'Hard' : k % 2 === 0 ? 'Medium' : 'Easy',
+          `Regarding ${topic} in ${cleanSubject}, what is the primary purpose of Technique ${k}?`,
+          [
+            `To optimize workflow performance, ensure correctness, and handle edge cases in ${topic}`,
+            `To disable type safety checks and ignore runtime exceptions`,
+            `To reduce test coverage and duplicate legacy configurations`,
+            `To restrict operations to local memory addresses only`,
+          ],
+          0,
+        )
+      )
+    }
+  }
+
+  // Grand Test: 20 comprehensive final questions
+  for (let g = 1; g <= 20; g++) {
+    const dayRef = ((g - 1) % days) + 1
+    const topic = dailyTopics[dayRef - 1] || `Full Syllabus — ${cleanSubject} Module ${dayRef}`
+    generated.push(
+      makeQ(
+        'Grand Test',
+        null,
+        topic,
+        g % 3 === 0 ? 'Hard' : 'Medium',
+        `Comprehensive Assessment: When architecting a real-world project in ${cleanSubject}, how should you address ${topic}?`,
+        [
+          `Implement modular architecture with validated inputs, unit testing, and documented error recovery`,
+          `Execute all operations sequentially inside a single global script without modularity`,
+          `Disable security checks and ignore performance profiling`,
+          `Rely on deprecated legacy functions without version pinning`,
+        ],
+        0,
+      )
+    )
+  }
+
+  return generated
+}
+
+// ---------------------------------------------------------------------------
+// GET QUESTIONS FOR SUBJECT
+// Retrieves questions for a specific subject, properly tagged with workshop metadata.
+// ---------------------------------------------------------------------------
+export function getQuestionsForSubject(subjectKey, workshop = {}, durationDays = null) {
+  const days = Number(durationDays || workshop?.durationDays) || 6
+  const targetSubject = SUBJECT_CATALOG.find((s) => s.id === subjectKey)
+
+  let rawList = []
+  if (targetSubject) {
+    rawList = targetSubject.questions
+  } else if (subjectKey === 'custom') {
+    return generateCustomQuestions(workshop?.name || 'Custom Subject', [], workshop, days)
+  } else {
+    rawList = excelQuestions
+  }
+
+  // Filter out days beyond the workshop's durationDays
+  const filtered = rawList.filter((qn) => {
+    if (qn.testType === 'Day-wise Test') {
+      return (Number(qn.dayNumber) || 1) <= days
+    }
+    return true
+  })
+
+  // Tag with the target workshop ID and workshop Name
+  return filtered.map((qn) => ({
+    ...qn,
+    workshopId: workshop?.id || null,
+    workshopName: workshop?.name || null,
+  }))
+}
+
+// Legacy exports for backwards compatibility
+export const sampleQuestions = excelQuestions
 export const sampleTests = [
   { testTitle: 'Pre-Assessment Test', testType: 'Pre-Assessment', duration: 30, totalQuestions: 30, dayNumber: null, isActive: true },
-  { testTitle: 'Day 1 — Excel Foundations', testType: 'Day-wise Test', duration: 20, totalQuestions: 30, dayNumber: 1, isActive: true },
-  { testTitle: 'Day 2 — Data Cleaning & Prep', testType: 'Day-wise Test', duration: 20, totalQuestions: 30, dayNumber: 2, isActive: true },
-  { testTitle: 'Day 3 — Core Functions & Formulas', testType: 'Day-wise Test', duration: 20, totalQuestions: 30, dayNumber: 3, isActive: true },
-  { testTitle: 'Day 4 — Lookup & Dynamic Analysis', testType: 'Day-wise Test', duration: 20, totalQuestions: 30, dayNumber: 4, isActive: true },
-  { testTitle: 'Day 5 — PivotTables & Dashboards', testType: 'Day-wise Test', duration: 20, totalQuestions: 30, dayNumber: 5, isActive: true },
-  { testTitle: 'Day 6 — Tools, Automation & Capstone', testType: 'Day-wise Test', duration: 20, totalQuestions: 30, dayNumber: 6, isActive: true },
+  { testTitle: 'Day 1 Test', testType: 'Day-wise Test', duration: 20, totalQuestions: 30, dayNumber: 1, isActive: true },
+  { testTitle: 'Day 2 Test', testType: 'Day-wise Test', duration: 20, totalQuestions: 30, dayNumber: 2, isActive: true },
+  { testTitle: 'Day 3 Test', testType: 'Day-wise Test', duration: 20, totalQuestions: 30, dayNumber: 3, isActive: true },
+  { testTitle: 'Day 4 Test', testType: 'Day-wise Test', duration: 20, totalQuestions: 30, dayNumber: 4, isActive: true },
+  { testTitle: 'Day 5 Test', testType: 'Day-wise Test', duration: 20, totalQuestions: 30, dayNumber: 5, isActive: true },
+  { testTitle: 'Day 6 Test', testType: 'Day-wise Test', duration: 20, totalQuestions: 30, dayNumber: 6, isActive: true },
   { testTitle: 'Grand Test — Full Syllabus', testType: 'Grand Test', duration: 45, totalQuestions: 30, dayNumber: null, isActive: true },
 ]
