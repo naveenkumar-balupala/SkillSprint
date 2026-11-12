@@ -77,10 +77,13 @@ export default function CreateTest() {
     if (!selectedWorkshop) {
       return setMsg({ type: 'error', text: 'Please select a workshop first.' })
     }
-    setMsg({ type: 'info', text: `Creating standard tests for "${selectedWorkshop.name}"…` })
+    setMsg({ type: 'info', text: `Creating tests and subject questions for "${selectedWorkshop.name}"…` })
     try {
       const count = await createDefaultTestsForWorkshop(selectedWorkshop)
-      setMsg({ type: 'success', text: `Created ${count} tests for ${selectedWorkshop.name}. Redirecting…` })
+      setMsg({
+        type: 'success',
+        text: `Created ${count} tests and populated subject questions for ${selectedWorkshop.name}! Redirecting…`,
+      })
       setTimeout(() => navigate('/admin/tests'), 1200)
     } catch (err) {
       setMsg({ type: 'error', text: err.message })

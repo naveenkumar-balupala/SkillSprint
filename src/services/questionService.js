@@ -4,6 +4,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   query,
   updateDoc,
@@ -12,6 +13,11 @@ import {
   writeBatch,
 } from 'firebase/firestore'
 import { db } from '../firebase/config'
+import {
+  isExcelQuestion,
+  detectSubjectFromWorkshop,
+  getQuestionsForSubject,
+} from '../utils/seedData'
 
 const COL = 'questions'
 
@@ -80,6 +86,70 @@ export async function cleanupOrphanedQuestions(validIds = null) {
   return orphanedDocs.length
 }
 
+// Remove Excel questions that were erroneously attached to non-Excel workshops
+export async function cleanupMismatchedExcelQuestions(workshops = null) {
+  let wList = workshops
+  if (!wList) {
+    const wSnap = await getDocs(collection(db, 'workshops'))
+    wList = wSnap.docs.map((d) => ({ id: d.id, ...d.data() }))
+  }
+
+  const nonExcelWorkshopIds = new Set(
+    wList
+      .filter((w) => {
+        const name = (w.name || '').toLowerCase()
+        const id = (w.id || '').toLowerCase()
+        return id !== 'excel-analytics' && !name.includes('excel') && !name.includes('spreadsheet')
+      })
+      .map((w) => w.id)
+  )
+
+  if (nonExcelWorkshopIds.size === 0) return 0
+
+  const qSnap = await getDocs(collection(db, COL))
+  const mismatchedDocs = qSnap.docs.filter((d) => {
+    const qData = d.data()
+    if (qData.workshopId && nonExcelWorkshopIds.has(qData.workshopId) && isExcelQuestion(qData)) {
+      return true
+    }
+    return false
+  })
+
+  if (mismatchedDocs.length === 0) return 0
+
+  for (let i = 0; i < mismatchedDocs.length; i += 400) {
+    const batch = writeBatch(db)
+    mismatchedDocs.slice(i, i + 400).forEach((d) => batch.delete(d.ref))
+    await batch.commit()
+  }
+  return mismatchedDocs.length
+}
+
+// Automatically populate the matching subject questions for a workshop
+export async function autoPopulateQuestionsForWorkshop(workshop, forceReplace = false) {
+  if (!workshop || !workshop.id) return 0
+
+  // If forceReplace, delete existing questions for this workshop first
+  if (forceReplace) {
+    await deleteQuestionsByWorkshop(workshop.id)
+  }
+
+  const subjectKey = detectSubjectFromWorkshop(workshop)
+  const questionsToAdd = getQuestionsForSubject(
+    subjectKey,
+    workshop,
+    workshop.durationDays || 6
+  )
+
+  const existing = await getAllQuestions(workshop.id)
+  const existingKeys = new Set(existing.map(questionKey))
+
+  const missing = questionsToAdd.filter((q) => !existingKeys.has(questionKey(q)))
+  if (missing.length === 0) return 0
+
+  return await bulkAddQuestions(missing, workshop)
+}
+
 export async function getAllQuestions(workshopId = null) {
   let q
   if (workshopId && workshopId !== 'All') {
@@ -107,16 +177,50 @@ export async function getQuestionsForTest(testType, dayNumber = null, workshopId
   let list = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
 
   if (workshopId && workshopId !== 'All') {
+    const isExcelWorkshop = workshopId === 'excel-analytics'
+
     // Return questions explicitly matching the workshop.
-    const filtered = list.filter((qn) => qn.workshopId === workshopId)
+    let filtered = list.filter((qn) => qn.workshopId === workshopId)
+
+    // If it is NOT an Excel workshop, strictly exclude any Excel questions!
+    if (!isExcelWorkshop) {
+      filtered = filtered.filter((qn) => !isExcelQuestion(qn))
+    }
+
     if (filtered.length > 0) return filtered
+
+    // If this workshop has 0 questions in Firestore, auto-generate & populate on the fly!
+    try {
+      const wSnap = await getDoc(doc(db, 'workshops', workshopId))
+      if (wSnap.exists()) {
+        const wData = { id: wSnap.id, ...wSnap.data() }
+        const isActuallyExcel =
+          (wData.name || '').toLowerCase().includes('excel') || wData.id === 'excel-analytics'
+
+        if (!isActuallyExcel) {
+          await autoPopulateQuestionsForWorkshop(wData)
+          // Re-fetch questions matching this test
+          const snap2 = await getDocs(q)
+          const list2 = snap2.docs.map((d) => ({ id: d.id, ...d.data() }))
+          const refreshed = list2
+            .filter((qn) => qn.workshopId === workshopId)
+            .filter((qn) => !isExcelQuestion(qn))
+          if (refreshed.length > 0) return refreshed
+        }
+      }
+    } catch (err) {
+      console.warn('Could not auto-populate questions on the fly:', err)
+    }
+
     // Only fall back to untagged legacy questions if the workshop is 'excel-analytics'
     if (workshopId === 'excel-analytics') {
       return list.filter((qn) => !qn.workshopId)
     }
     return []
   }
-  return list
+
+  // If no workshopId specified (legacy overview), only return untagged or excel questions
+  return list.filter((qn) => !qn.workshopId || qn.workshopId === 'excel-analytics')
 }
 
 // Normalized identity for a question, used to detect duplicates and to make seeding idempotent.

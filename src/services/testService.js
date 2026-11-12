@@ -13,6 +13,7 @@ import {
   writeBatch,
 } from 'firebase/firestore'
 import { db } from '../firebase/config'
+import { autoPopulateQuestionsForWorkshop } from './questionService'
 
 const COL = 'tests'
 
@@ -127,5 +128,13 @@ export async function createDefaultTestsForWorkshop(workshop) {
   for (const t of testsToCreate) {
     await createTest(t)
   }
+
+  // Also auto-populate corresponding subject questions into Firestore for this workshop!
+  try {
+    await autoPopulateQuestionsForWorkshop(workshop, false)
+  } catch (err) {
+    console.warn('Could not auto-populate questions during test suite creation:', err)
+  }
+
   return testsToCreate.length
 }

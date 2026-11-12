@@ -4,10 +4,12 @@ import {
   addQuestion,
   bulkAddQuestions,
   deleteQuestion,
+  deleteQuestionsByWorkshop,
   getAllQuestions,
   updateQuestion,
   removeDuplicateQuestions,
   cleanupOrphanedQuestions,
+  cleanupMismatchedExcelQuestions,
   questionKey,
 } from '../../services/questionService'
 import { getAllWorkshops, ensureDefaultWorkshops } from '../../services/workshopService'
@@ -16,6 +18,7 @@ import {
   detectSubjectFromWorkshop,
   getQuestionsForSubject,
   generateCustomQuestions,
+  isExcelQuestion,
 } from '../../utils/seedData'
 import { exportToExcel, readSpreadsheet } from '../../utils/export'
 import Loader from '../../components/Loader'
@@ -87,6 +90,35 @@ export default function ManageQuestions() {
       if (w.length === 0) {
         w = await ensureDefaultWorkshops()
       }
+
+      // Auto-cleanup 1: Remove questions belonging to deleted workshops
+      const validIds = new Set(w.map((item) => item.id))
+      validIds.add('excel-analytics')
+      const orphanedDeleted = q.filter((item) => item.workshopId && !validIds.has(item.workshopId))
+      if (orphanedDeleted.length > 0) {
+        await cleanupOrphanedQuestions(validIds).catch(() => {})
+        q = await getAllQuestions()
+      }
+
+      // Auto-cleanup 2: Remove Excel questions erroneously attached to non-Excel workshops
+      const nonExcelWorkshopIds = new Set(
+        w
+          .filter(
+            (item) =>
+              item.id !== 'excel-analytics' &&
+              !item.name.toLowerCase().includes('excel') &&
+              !item.name.toLowerCase().includes('spreadsheet')
+          )
+          .map((item) => item.id)
+      )
+      const mismatchedExcel = q.filter(
+        (item) => item.workshopId && nonExcelWorkshopIds.has(item.workshopId) && isExcelQuestion(item)
+      )
+      if (mismatchedExcel.length > 0) {
+        await cleanupMismatchedExcelQuestions(w).catch(() => {})
+        q = await getAllQuestions()
+      }
+
       setWorkshops(w)
       setQuestions(q)
     } catch (err) {
@@ -134,32 +166,50 @@ export default function ManageQuestions() {
     }
   }
 
-  // Filtered questions: untagged legacy questions ONLY match 'excel-analytics'
+  // Filtered questions: for non-Excel workshops, strictly omit any Excel questions!
   const filtered = useMemo(() => {
+    const isExcelW =
+      fWorkshop === 'excel-analytics' ||
+      workshops.find((w) => w.id === fWorkshop)?.name?.toLowerCase()?.includes('excel')
+
     return questions.filter((q) => {
       const matchWorkshop =
         fWorkshop === 'All'
           ? true
           : q.workshopId === fWorkshop ||
             (!q.workshopId && fWorkshop === 'excel-analytics')
+
+      // If viewing a specific non-Excel workshop, never show Excel questions
+      if (fWorkshop !== 'All' && !isExcelW && isExcelQuestion(q)) {
+        return false
+      }
+
       const matchType = fType === 'All' || q.testType === fType
       const matchTopic = fTopic === 'All' || q.topic === fTopic
       const matchDiff = fDiff === 'All' || q.difficulty === fDiff
       const matchDay = fDay === 'All' || String(q.dayNumber) === String(fDay)
       return matchWorkshop && matchType && matchTopic && matchDiff && matchDay
     })
-  }, [questions, fWorkshop, fType, fTopic, fDiff, fDay])
+  }, [questions, fWorkshop, fType, fTopic, fDiff, fDay, workshops])
 
   const topics = useMemo(() => {
+    const isExcelW =
+      fWorkshop === 'excel-analytics' ||
+      workshops.find((w) => w.id === fWorkshop)?.name?.toLowerCase()?.includes('excel')
+
     const pool =
       fWorkshop === 'All'
         ? questions
-        : questions.filter(
-            (q) => q.workshopId === fWorkshop || (!q.workshopId && fWorkshop === 'excel-analytics')
-          )
+        : questions
+            .filter(
+              (q) =>
+                q.workshopId === fWorkshop || (!q.workshopId && fWorkshop === 'excel-analytics')
+            )
+            .filter((q) => isExcelW || !isExcelQuestion(q))
+
     const unique = Array.from(new Set(pool.map((q) => q.topic).filter(Boolean))).sort()
     return ['All', ...unique]
-  }, [questions, fWorkshop])
+  }, [questions, fWorkshop, workshops])
 
   const resetForm = () => {
     setForm({

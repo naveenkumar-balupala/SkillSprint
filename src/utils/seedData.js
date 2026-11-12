@@ -970,6 +970,36 @@ export function getQuestionsForSubject(subjectKey, workshop = {}, durationDays =
   }))
 }
 
+// Helper to detect if a question is specific to Excel
+export function isExcelQuestion(q = {}) {
+  const text = `${q.questionText || ''} ${q.topic || ''} ${q.unit || ''} ${(q.options || []).join(' ')}`.toLowerCase()
+  return (
+    text.includes('vlookup') ||
+    text.includes('xlookup') ||
+    text.includes('hlookup') ||
+    text.includes('pivottable') ||
+    text.includes('pivot table') ||
+    text.includes('power query') ||
+    text.includes('power pivot') ||
+    text.includes('cell a1') ||
+    text.includes('name box') ||
+    text.includes('cell referencing') ||
+    text.includes('freeze panes') ||
+    text.includes('goal seek') ||
+    text.includes('scenario manager') ||
+    text.includes('flash fill') ||
+    text.includes('text-to-columns') ||
+    text.includes('sumifs') ||
+    text.includes('countifs') ||
+    text.includes('averageifs') ||
+    text.includes('eomonth') ||
+    text.includes('datedif') ||
+    text.includes('workbook') ||
+    text.includes('worksheet tab') ||
+    text.includes('excel')
+  )
+}
+
 // Legacy exports for backwards compatibility
 export const sampleQuestions = excelQuestions
 export const sampleTests = [
