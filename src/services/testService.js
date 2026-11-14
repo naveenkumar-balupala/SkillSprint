@@ -85,9 +85,11 @@ export async function getActiveTests(workshopId = null) {
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }))
 }
 
-// Generate standard Pre-Assessment, Day-wise Tests (1..N), and Grand Test for any workshop.
-export async function createDefaultTestsForWorkshop(workshop) {
+// Generate standard Pre-Assessment, Day-wise Tests (1..N), and Grand Test for any workshop based on delivered topics.
+export async function createDefaultTestsForWorkshop(workshop, topics = null) {
   const daysCount = Number(workshop.durationDays) || 6
+  const deliveredTopics = topics || workshop.topics || []
+
   const testsToCreate = [
     {
       testTitle: `${workshop.name} — Pre-Assessment`,
@@ -98,12 +100,14 @@ export async function createDefaultTestsForWorkshop(workshop) {
       isActive: true,
       workshopId: workshop.id,
       workshopName: workshop.name,
+      topicsCovered: ['Foundations & Core Principles'],
     },
   ]
 
   for (let d = 1; d <= daysCount; d++) {
+    const dayTopic = deliveredTopics[d - 1] || `Day ${d} Topics`
     testsToCreate.push({
-      testTitle: `Day ${d} — ${workshop.name} Test`,
+      testTitle: `Day ${d} Test: ${dayTopic}`,
       testType: 'Day-wise Test',
       duration: 20,
       totalQuestions: 30,
@@ -111,11 +115,13 @@ export async function createDefaultTestsForWorkshop(workshop) {
       isActive: true,
       workshopId: workshop.id,
       workshopName: workshop.name,
+      topic: dayTopic,
+      topicsCovered: [dayTopic],
     })
   }
 
   testsToCreate.push({
-    testTitle: `${workshop.name} — Grand Test`,
+    testTitle: `${workshop.name} — Grand Test (Full Syllabus)`,
     testType: 'Grand Test',
     duration: 45,
     totalQuestions: 30,
@@ -123,15 +129,16 @@ export async function createDefaultTestsForWorkshop(workshop) {
     isActive: true,
     workshopId: workshop.id,
     workshopName: workshop.name,
+    topicsCovered: deliveredTopics.length ? deliveredTopics : ['Full Syllabus'],
   })
 
   for (const t of testsToCreate) {
     await createTest(t)
   }
 
-  // Also auto-populate corresponding subject questions into Firestore for this workshop!
+  // Also auto-populate corresponding subject questions into Firestore for this workshop based on delivered topics!
   try {
-    await autoPopulateQuestionsForWorkshop(workshop, false)
+    await autoPopulateQuestionsForWorkshop(workshop, false, deliveredTopics)
   } catch (err) {
     console.warn('Could not auto-populate questions during test suite creation:', err)
   }

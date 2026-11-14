@@ -1,12 +1,15 @@
 import { useEffect, useMemo, useState } from 'react'
 import { getAllAttempts } from '../../services/attemptService'
 import { getAllStudents, syncResultsWithStudents } from '../../services/studentService'
+import { getAllTests } from '../../services/testService'
+import { getAllWorkshops } from '../../services/workshopService'
 import { exportToCSV, exportToExcel } from '../../utils/export'
 import Loader from '../../components/Loader'
 import Alert from '../../components/Alert'
 
 export default function ViewResults() {
   const [attempts, setAttempts] = useState([])
+  const [workshopsList, setWorkshopsList] = useState([])
   const [loading, setLoading] = useState(true)
   const [syncing, setSyncing] = useState(false)
   const [msg, setMsg] = useState({ type: '', text: '' })
@@ -22,28 +25,36 @@ export default function ViewResults() {
 
   const load = () => {
     setLoading(true)
-    Promise.all([getAllAttempts(), getAllStudents()]).then(([a, students]) => {
-      // Overlay each attempt with the student's current branch/section/batch/workshop.
-      const byId = {}
-      students.forEach((s) => (byId[s.id] = s))
+    Promise.all([getAllAttempts(), getAllStudents(), getAllTests(), getAllWorkshops()]).then(([a, students, tests, ws]) => {
+      setWorkshopsList(ws)
+      const sById = {}
+      students.forEach((s) => (sById[s.id] = s))
+      const tById = {}
+      tests.forEach((t) => (tById[t.id] = t))
+      const wById = {}
+      ws.forEach((w) => (wById[w.id] = w))
+
       const enriched = a
         .filter((x) => x.attempted)
         .map((att) => {
-          const s = byId[att.studentId]
-          return s
-            ? {
-                ...att,
-                studentName: s.name ?? att.studentName,
-                usn: s.usn ?? att.usn,
-                branch: s.branch ?? att.branch,
-                section: s.section ?? att.section,
-                batch: s.batch ?? att.batch ?? null,
-                workshopName: att.workshopName || s.workshopName || 'General',
-              }
-            : {
-                ...att,
-                workshopName: att.workshopName || 'General',
-              }
+          const s = sById[att.studentId]
+          const t = tById[att.testId]
+          const resolvedWId = t?.workshopId || att.workshopId || s?.workshopId || null
+          const resolvedWName =
+            t?.workshopName || (resolvedWId && wById[resolvedWId]?.name) || att.workshopName || s?.workshopName || 'General'
+
+          return {
+            ...att,
+            studentName: s?.name ?? att.studentName,
+            usn: s?.usn ?? att.usn,
+            branch: s?.branch ?? att.branch,
+            section: s?.section ?? att.section,
+            batch: s?.batch ?? att.batch ?? null,
+            workshopId: resolvedWId,
+            workshopName: resolvedWName,
+            testTitle: t?.testTitle ?? att.testTitle,
+            testType: t?.testType ?? att.testType,
+          }
         })
       setAttempts(enriched)
       setLoading(false)

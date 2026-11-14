@@ -18,26 +18,20 @@ export default function ExportReports() {
 
   const { students, attempts, tests, testWise, sectionWise, branchWise, batchWise, topicWise, cards } = data
 
-  const workshopOptions = [
-    'All',
-    ...new Set([
-      ...tests.map((t) => t.workshopName).filter(Boolean),
-      ...students.map((s) => s.workshopName).filter(Boolean),
-    ]),
-  ]
   const batchOptions = ['All', ...new Set(students.map((s) => s.batch).filter(Boolean))]
+  const selectedWorkshop = data.workshops?.find((w) => w.id === workshop) || null
 
   const inBatch = (x) => batch === 'All' || x.batch === batch
-  const inWorkshop = (x) =>
-    workshop === 'All' ||
-    x.workshopName === workshop ||
-    (!x.workshopName && workshop === 'General')
+  const inWorkshop = (x) => {
+    if (workshop === 'All') return true
+    return x.workshopId === workshop || (selectedWorkshop && x.workshopName === selectedWorkshop.name)
+  }
 
   const fStudents = students.filter((s) => inBatch(s) && inWorkshop(s))
   const fTests = tests.filter((t) => inWorkshop(t))
   const fAttempts = attempts.filter((a) => inBatch(a) && inWorkshop(a))
 
-  const workshopSuffix = workshop === 'All' ? '' : `-${workshop.replace(/\s+/g, '_')}`
+  const workshopSuffix = selectedWorkshop ? `-${selectedWorkshop.name.replace(/\s+/g, '_')}` : ''
   const batchSuffix = batch === 'All' ? '' : `-${batch}`
   const fileSuffix = `${workshopSuffix}${batchSuffix}`
 
@@ -98,12 +92,13 @@ export default function ExportReports() {
         <div className="flex items-center gap-2">
           <label className="label mb-0">Workshop:</label>
           <select
-            className="input max-w-xs"
+            className="input max-w-xs font-medium"
             value={workshop}
             onChange={(e) => setWorkshop(e.target.value)}
           >
-            {workshopOptions.map((w) => (
-              <option key={w}>{w}</option>
+            <option value="All">All Workshops</option>
+            {(data.workshops || []).map((w) => (
+              <option key={w.id} value={w.id}>{w.name}</option>
             ))}
           </select>
         </div>

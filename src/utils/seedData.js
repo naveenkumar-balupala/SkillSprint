@@ -831,6 +831,68 @@ export const SUBJECT_CATALOG = [
 ]
 
 // ---------------------------------------------------------------------------
+// DEFAULT DELIVERED TOPICS PER SUBJECT
+// ---------------------------------------------------------------------------
+export const DEFAULT_SUBJECT_TOPICS = {
+  python: [
+    'Python Syntax, Variables & Basic Data Types',
+    'Data Structures: Lists, Tuples, Dictionaries & Sets',
+    'Control Flow, Functions, Lambda & Built-in Modules',
+    'Object-Oriented Programming (Classes & Inheritance)',
+    'File Handling, Exceptions & Standard Library',
+    'NumPy, Pandas & Practical Data Processing',
+  ],
+  webdev: [
+    'HTML5 Semantics, Modern CSS Layouts (Flexbox & Grid)',
+    'Modern JavaScript (ES6+), Arrow Functions & Destructuring',
+    'DOM Manipulation, Event Handling & Storage APIs',
+    'Asynchronous JS, Promises, Async/Await & Fetch APIs',
+    'React Fundamentals: Components, Props & State (useState)',
+    'React Hooks (useEffect), Routing & Full Stack Integration',
+  ],
+  java: [
+    'Java Syntax, Data Types, Control Structures & Loops',
+    'Object-Oriented Programming: Classes, Objects & Constructors',
+    'Inheritance, Polymorphism & Method Overriding',
+    'Encapsulation, Abstract Classes & Interfaces',
+    'Exception Handling, Try-Catch Blocks & Strings',
+    'Java Collections Framework (ArrayList, HashSet, HashMap)',
+  ],
+  sql: [
+    'RDBMS Foundations, DDL (CREATE, ALTER, DROP) & Constraints',
+    'DQL Querying, Filtering (WHERE, LIKE, IN) & Sorting',
+    'Aggregate Functions (SUM, AVG, COUNT) & GROUP BY / HAVING',
+    'Relational Joins (INNER, LEFT, RIGHT, FULL) & Table Keys',
+    'Subqueries, Nested Selects, CTEs & Database Views',
+    'DML Operations, Transactions & ACID Properties',
+  ],
+  ml: [
+    'Machine Learning Foundations, Data Cleaning & Preprocessing',
+    'Supervised Learning: Linear Regression & Gradient Descent',
+    'Classification: Logistic Regression, Decision Trees & Random Forest',
+    'Model Evaluation: Confusion Matrix, Precision, Recall & ROC-AUC',
+    'Unsupervised Learning: K-Means Clustering & Dimensionality Reduction (PCA)',
+    'Model Pipelines, Hyperparameter Tuning & Cross-Validation',
+  ],
+  excel: [
+    'Interface, Navigation, Data Types & Structured Tables',
+    'Data Cleaning, Flash Fill, Text Functions & Validation',
+    'Formulas, Logical Conditions (IF/AND/OR) & Aggregations (SUMIFS)',
+    'Advanced Lookups (VLOOKUP, INDEX-MATCH, XLOOKUP)',
+    'PivotTables, PivotCharts, Slicers & Interactive Dashboards',
+    'What-If Analysis, Data Model & Automation Best Practices',
+  ],
+  custom: [
+    'Foundations & Core Principles',
+    'Architecture, Setup & Essential Tooling',
+    'Core Workflows & Key Implementations',
+    'Advanced Features, Integrations & APIs',
+    'Testing, Security, Debugging & Optimization',
+    'Real-World Case Studies, Deployment & Best Practices',
+  ],
+}
+
+// ---------------------------------------------------------------------------
 // DYNAMIC SUBJECT DETECTION
 // ---------------------------------------------------------------------------
 export function detectSubjectFromWorkshop(workshop = {}) {
@@ -846,7 +908,7 @@ export function detectSubjectFromWorkshop(workshop = {}) {
 
 // ---------------------------------------------------------------------------
 // DYNAMIC CUSTOM SUBJECT GENERATOR
-// Generates structured, realistic MCQs for ANY custom workshop subject and syllabus.
+// Generates structured, realistic MCQs based on the EXACT topics delivered in the workshop.
 // ---------------------------------------------------------------------------
 export function generateCustomQuestions(subjectName, dailyTopics = [], workshop = {}, durationDays = 6) {
   const days = Math.max(1, Math.min(Number(durationDays) || 6, 30))
@@ -870,64 +932,161 @@ export function generateCustomQuestions(subjectName, dailyTopics = [], workshop 
   })
 
   // Pre-Assessment: 15 fundamental diagnostic questions
-  for (let i = 1; i <= 15; i++) {
+  const preAssessmentStems = [
+    { text: `What is the primary objective of studying ${cleanSubject}?`, diff: 'Easy' },
+    { text: `Which foundational principle is central to all architecture in ${cleanSubject}?`, diff: 'Easy' },
+    { text: `In ${cleanSubject}, what is the standard recommended development and staging workflow?`, diff: 'Medium' },
+    { text: `Which prerequisite skill or concept is most essential for mastering ${cleanSubject}?`, diff: 'Easy' },
+    { text: `How do standard conventions in ${cleanSubject} enhance team productivity?`, diff: 'Medium' },
+    { text: `What is considered a critical security or validation rule in ${cleanSubject}?`, diff: 'Medium' },
+    { text: `When starting a new project in ${cleanSubject}, what is the recommended first architectural step?`, diff: 'Medium' },
+    { text: `How does modular design in ${cleanSubject} prevent cascading system failures?`, diff: 'Hard' },
+    { text: `Which tooling mechanism is universally adopted for versioning in ${cleanSubject}?`, diff: 'Easy' },
+    { text: `What is the primary indicator of scalable design in ${cleanSubject}?`, diff: 'Hard' },
+    { text: `In ${cleanSubject}, how should sensitive configuration keys and credentials be stored?`, diff: 'Medium' },
+    { text: `Which error-handling strategy is recommended across all modules in ${cleanSubject}?`, diff: 'Medium' },
+    { text: `How does continuous automated testing impact deliverable quality in ${cleanSubject}?`, diff: 'Easy' },
+    { text: `What is the main drawback of ignoring static analysis or code reviews in ${cleanSubject}?`, diff: 'Medium' },
+    { text: `Which standard documentation practice ensures maintainability in ${cleanSubject}?`, diff: 'Easy' },
+  ]
+
+  preAssessmentStems.forEach((stem, idx) => {
     generated.push(
       makeQ(
         'Pre-Assessment',
         null,
         'Foundations & Core Principles',
-        i % 3 === 0 ? 'Hard' : i % 2 === 0 ? 'Medium' : 'Easy',
-        `In ${cleanSubject}, which of the following best represents standard best practice for Core Concept #${i}?`,
+        stem.diff,
+        stem.text,
         [
-          `Apply verified standard industry conventions for ${cleanSubject}`,
-          `Bypass syntax validation and execute without parameters`,
-          `Hardcode values directly into the configuration module`,
-          `Omit error handling and boundary condition verification`,
+          `Apply verified standard patterns, structured workflows, and clean code principles`,
+          `Bypass validation and disable error handling for faster execution`,
+          `Store hardcoded credentials directly inside client-side source code`,
+          `Rely on unversioned legacy dependencies without package isolation`,
         ],
         0,
       )
     )
-  }
+  })
 
-  // Day-wise Tests: 15 questions per day based on custom syllabus topics
+  // Day-wise Tests: 15 targeted questions per day based directly on the delivered topic!
+  const questionBlueprints = [
+    (topic) => ({
+      text: `What is the fundamental role of "${topic}" in ${cleanSubject}?`,
+      diff: 'Easy',
+      correct: `To establish structured workflows, reliable logic, and consistent design patterns`,
+    }),
+    (topic) => ({
+      text: `Which of the following is considered an industry best practice when implementing "${topic}"?`,
+      diff: 'Easy',
+      correct: `Validate all inputs thoroughly, follow naming conventions, and handle exceptions gracefully`,
+    }),
+    (topic) => ({
+      text: `In ${cleanSubject}, what is the main architectural advantage of mastering "${topic}"?`,
+      diff: 'Medium',
+      correct: `Enables modular separation of concerns and improves system maintainability`,
+    }),
+    (topic) => ({
+      text: `When designing a production component involving "${topic}", how should reliability be ensured?`,
+      diff: 'Medium',
+      correct: `Implement comprehensive unit tests, clear boundary checks, and automated monitoring`,
+    }),
+    (topic) => ({
+      text: `Which common misconfiguration or anti-pattern must be avoided when working with "${topic}"?`,
+      diff: 'Medium',
+      correct: `Tight coupling, neglecting resource cleanup, and ignoring asynchronous race conditions`,
+    }),
+    (topic) => ({
+      text: `When troubleshooting an unexpected runtime error in "${topic}", what is the standard first step?`,
+      diff: 'Easy',
+      correct: `Inspect the execution stack trace, review input parameters, and check error logs`,
+    }),
+    (topic) => ({
+      text: `How does proper implementation of "${topic}" impact overall application performance?`,
+      diff: 'Medium',
+      correct: `Optimizes resource utilization, reduces latency, and prevents memory leaks`,
+    }),
+    (topic) => ({
+      text: `Which testing strategy is most effective for verifying functionality related to "${topic}"?`,
+      diff: 'Medium',
+      correct: `Automated unit and integration tests covering both happy path and critical edge cases`,
+    }),
+    (topic) => ({
+      text: `What primary trade-off must engineers evaluate when adopting an architectural pattern for "${topic}"?`,
+      diff: 'Hard',
+      correct: `Balancing implementation complexity and flexibility against long-term maintainability`,
+    }),
+    (topic) => ({
+      text: `When multiple engineers collaborate on "${topic}", what practice best prevents integration conflicts?`,
+      diff: 'Easy',
+      correct: `Clear API contracts, pull-request validations, and modular component boundaries`,
+    }),
+    (topic) => ({
+      text: `Which security consideration is most essential when deploying features based on "${topic}"?`,
+      diff: 'Medium',
+      correct: `Sanitizing all external inputs, enforcing least privilege, and protecting sensitive state`,
+    }),
+    (topic) => ({
+      text: `In ${cleanSubject}, how should lifecycle transitions and state mutations be managed in "${topic}"?`,
+      diff: 'Hard',
+      correct: `Using predictable, deterministic state transitions with clear mutation boundaries`,
+    }),
+    (topic) => ({
+      text: `What documentation artifact is most valuable for developers maintaining components of "${topic}"?`,
+      diff: 'Easy',
+      correct: `Clear API documentation, usage examples, and architecture interface diagrams`,
+    }),
+    (topic) => ({
+      text: `When scaling an application module powered by "${topic}", which design pattern is recommended?`,
+      diff: 'Hard',
+      correct: `Stateless service architecture with horizontal scale-out capabilities and connection pooling`,
+    }),
+    (topic) => ({
+      text: `What is the key indicator that a team has successfully achieved production readiness in "${topic}"?`,
+      diff: 'Medium',
+      correct: `Consistent, reliable deliverables with high test pass rates and low defect density in production`,
+    }),
+  ]
+
   for (let d = 1; d <= days; d++) {
-    const topic = dailyTopics[d - 1] || `Day ${d} — ${cleanSubject} Module${d}`
-    for (let k = 1; k <= 15; k++) {
+    const topic = dailyTopics[d - 1] || `Day ${d} — ${cleanSubject} Module ${d}`
+    questionBlueprints.forEach((bp) => {
+      const { text, diff, correct } = bp(topic)
       generated.push(
         makeQ(
           'Day-wise Test',
           d,
           topic,
-          k % 3 === 0 ? 'Hard' : k % 2 === 0 ? 'Medium' : 'Easy',
-          `Regarding ${topic} in ${cleanSubject}, what is the primary purpose of Technique ${k}?`,
+          diff,
+          text,
           [
-            `To optimize workflow performance, ensure correctness, and handle edge cases in ${topic}`,
-            `To disable type safety checks and ignore runtime exceptions`,
-            `To reduce test coverage and duplicate legacy configurations`,
-            `To restrict operations to local memory addresses only`,
+            correct,
+            `Disable automated checks and execute without runtime constraints`,
+            `Hardcode values directly into the configuration module without validation`,
+            `Suppress warnings and omit error handling to bypass failure notifications`,
           ],
           0,
         )
       )
-    }
+    })
   }
 
-  // Grand Test: 20 comprehensive final questions
+  // Grand Test: 20 comprehensive final questions covering all delivered topics
   for (let g = 1; g <= 20; g++) {
     const dayRef = ((g - 1) % days) + 1
-    const topic = dailyTopics[dayRef - 1] || `Full Syllabus — ${cleanSubject} Module ${dayRef}`
+    const topic = dailyTopics[dayRef - 1] || `Module ${dayRef} Topics`
     generated.push(
       makeQ(
         'Grand Test',
         null,
         topic,
         g % 3 === 0 ? 'Hard' : 'Medium',
-        `Comprehensive Assessment: When architecting a real-world project in ${cleanSubject}, how should you address ${topic}?`,
+        `Comprehensive Assessment #${g}: In a production ${cleanSubject} system, how should you architect and deliver "${topic}"?`,
         [
-          `Implement modular architecture with validated inputs, unit testing, and documented error recovery`,
-          `Execute all operations sequentially inside a single global script without modularity`,
-          `Disable security checks and ignore performance profiling`,
-          `Rely on deprecated legacy functions without version pinning`,
+          `Implement modular architecture with validated inputs, automated test coverage, and documented error recovery`,
+          `Execute all operations sequentially inside a single global script without modular separation`,
+          `Disable security checks and ignore performance profiling under heavy load`,
+          `Rely on deprecated legacy patterns without version pinning or dependency tracking`,
         ],
         0,
       )
@@ -940,18 +1099,29 @@ export function generateCustomQuestions(subjectName, dailyTopics = [], workshop 
 // ---------------------------------------------------------------------------
 // GET QUESTIONS FOR SUBJECT
 // Retrieves questions for a specific subject, properly tagged with workshop metadata.
+// If customTopics are provided, questions are adapted to match the delivered topics.
 // ---------------------------------------------------------------------------
-export function getQuestionsForSubject(subjectKey, workshop = {}, durationDays = null) {
+export function getQuestionsForSubject(subjectKey, workshop = {}, durationDays = null, customTopics = null) {
   const days = Number(durationDays || workshop?.durationDays) || 6
   const targetSubject = SUBJECT_CATALOG.find((s) => s.id === subjectKey)
+  const topicsToUse = customTopics || workshop?.topics || []
 
   let rawList = []
-  if (targetSubject) {
+  if (targetSubject && (!topicsToUse.length || subjectKey === 'excel')) {
     rawList = targetSubject.questions
-  } else if (subjectKey === 'custom') {
-    return generateCustomQuestions(workshop?.name || 'Custom Subject', [], workshop, days)
+  } else if (targetSubject && topicsToUse.length > 0) {
+    // If standard subject with custom topics provided by trainer, adjust questions' topic fields to delivered topics
+    rawList = targetSubject.questions.map((qn) => {
+      if (qn.testType === 'Day-wise Test' && qn.dayNumber) {
+        const deliveredTopic = topicsToUse[qn.dayNumber - 1]
+        if (deliveredTopic) {
+          return { ...qn, topic: deliveredTopic }
+        }
+      }
+      return qn
+    })
   } else {
-    rawList = excelQuestions
+    return generateCustomQuestions(workshop?.name || 'Custom Subject', topicsToUse, workshop, days)
   }
 
   // Filter out days beyond the workshop's durationDays

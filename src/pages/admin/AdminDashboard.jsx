@@ -27,19 +27,13 @@ export default function AdminDashboard() {
 
   // Batch & Workshop filters
   const batchOptions = ['All', ...new Set(data.students.map((s) => s.batch).filter(Boolean))]
-  const workshopOptions = [
-    'All',
-    ...new Set([
-      ...data.tests.map((t) => t.workshopName).filter(Boolean),
-      ...data.students.map((s) => s.workshopName).filter(Boolean),
-    ]),
-  ]
+  const selectedWorkshop = data.workshops?.find((w) => w.id === workshop) || null
 
   const inBatch = (x) => batch === 'All' || (x.batch || 'Unknown') === batch
-  const inWorkshop = (x) =>
-    workshop === 'All' ||
-    x.workshopName === workshop ||
-    (!x.workshopName && (workshop === 'General' || workshop === 'excel-analytics'))
+  const inWorkshop = (x) => {
+    if (workshop === 'All') return true
+    return x.workshopId === workshop || (selectedWorkshop && x.workshopName === selectedWorkshop.name)
+  }
 
   const fStudents = data.students.filter((s) => inBatch(s) && inWorkshop(s))
   const fTests = data.tests.filter((t) => inWorkshop(t))
@@ -51,6 +45,7 @@ export default function AdminDashboard() {
     tests: fTests,
     attempts: fAttempts,
     results: fResults,
+    selectedWorkshop,
   })
 
   const { cards, testWise, topicWise } = view
@@ -76,8 +71,11 @@ export default function AdminDashboard() {
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">
             <label className="text-sm font-medium text-slate-500">Workshop</label>
-            <select className="input w-44" value={workshop} onChange={(e) => setWorkshop(e.target.value)}>
-              {workshopOptions.map((w) => <option key={w}>{w}</option>)}
+            <select className="input w-48 font-medium" value={workshop} onChange={(e) => setWorkshop(e.target.value)}>
+              <option value="All">All Workshops</option>
+              {(data.workshops || []).map((w) => (
+                <option key={w.id} value={w.id}>{w.name}</option>
+              ))}
             </select>
           </div>
           <div className="flex items-center gap-2">

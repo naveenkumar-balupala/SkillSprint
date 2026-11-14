@@ -125,8 +125,8 @@ export async function cleanupMismatchedExcelQuestions(workshops = null) {
   return mismatchedDocs.length
 }
 
-// Automatically populate the matching subject questions for a workshop
-export async function autoPopulateQuestionsForWorkshop(workshop, forceReplace = false) {
+// Automatically populate the matching subject questions for a workshop based on delivered topics
+export async function autoPopulateQuestionsForWorkshop(workshop, forceReplace = false, customTopics = null) {
   if (!workshop || !workshop.id) return 0
 
   // If forceReplace, delete existing questions for this workshop first
@@ -134,11 +134,13 @@ export async function autoPopulateQuestionsForWorkshop(workshop, forceReplace = 
     await deleteQuestionsByWorkshop(workshop.id)
   }
 
-  const subjectKey = detectSubjectFromWorkshop(workshop)
+  const deliveredTopics = customTopics || workshop.topics || []
+  const subjectKey = workshop.subject || detectSubjectFromWorkshop(workshop)
   const questionsToAdd = getQuestionsForSubject(
     subjectKey,
     workshop,
-    workshop.durationDays || 6
+    workshop.durationDays || 6,
+    deliveredTopics
   )
 
   const existing = await getAllQuestions(workshop.id)

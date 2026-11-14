@@ -139,13 +139,34 @@ export default function CreateTest() {
         </div>
 
         <div>
-          <label className="label">Test Title</label>
+          <div className="flex items-center justify-between">
+            <label className="label">Test Title</label>
+            {form.testType === 'Day-wise Test' && selectedWorkshop?.topics?.[Number(form.dayNumber) - 1] && (
+              <button
+                type="button"
+                className="text-xs text-brand font-semibold hover:underline"
+                onClick={() =>
+                  setForm({
+                    ...form,
+                    testTitle: `Day ${form.dayNumber} Test: ${selectedWorkshop.topics[Number(form.dayNumber) - 1]}`,
+                  })
+                }
+              >
+                ⚡ Use Delivered Topic Title
+              </button>
+            )}
+          </div>
           <input
             className="input"
             value={form.testTitle}
             onChange={set('testTitle')}
-            placeholder="e.g. Day 1 — Foundations & Core Concepts"
+            placeholder="e.g. Day 1 Test: Core Concepts & Syntax"
           />
+          {form.testType === 'Day-wise Test' && selectedWorkshop?.topics?.[Number(form.dayNumber) - 1] && (
+            <p className="mt-1 text-xs text-slate-500">
+              📚 Delivered Topic for Day {form.dayNumber}: <strong>{selectedWorkshop.topics[Number(form.dayNumber) - 1]}</strong>
+            </p>
+          )}
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">

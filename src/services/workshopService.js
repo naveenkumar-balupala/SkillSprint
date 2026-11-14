@@ -18,14 +18,17 @@ import { deleteTestsByWorkshop } from './testService'
 const COL = 'workshops'
 
 export async function createWorkshop(data) {
-  return addDoc(collection(db, COL), {
+  const docRef = await addDoc(collection(db, COL), {
     name: data.name.trim(),
     code: (data.code || data.name.slice(0, 8)).trim().toUpperCase(),
     description: (data.description || '').trim(),
     durationDays: Number(data.durationDays) || 6,
+    subject: data.subject || 'custom',
+    topics: Array.isArray(data.topics) ? data.topics.map((t) => String(t || '').trim()) : [],
     isActive: data.isActive ?? true,
     createdAt: serverTimestamp(),
   })
+  return { id: docRef.id, ...data }
 }
 
 export async function updateWorkshop(id, data) {
@@ -34,6 +37,10 @@ export async function updateWorkshop(id, data) {
   if (data.code !== undefined) payload.code = data.code.trim().toUpperCase()
   if (data.description !== undefined) payload.description = data.description.trim()
   if (data.durationDays !== undefined) payload.durationDays = Number(data.durationDays) || 6
+  if (data.subject !== undefined) payload.subject = data.subject
+  if (data.topics !== undefined) {
+    payload.topics = Array.isArray(data.topics) ? data.topics.map((t) => String(t || '').trim()) : []
+  }
   if (data.isActive !== undefined) payload.isActive = Boolean(data.isActive)
 
   return setDoc(

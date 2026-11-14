@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { buildDashboard, computeStats } from '../../services/statsService'
 import Loader from '../../components/Loader'
 import Alert from '../../components/Alert'
@@ -25,10 +26,13 @@ function ChartCard({ title, children, note }) {
 }
 
 export default function Statistics() {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const initialWorkshop = searchParams.get('workshopId') || 'All'
+
   const [raw, setRaw] = useState(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
-  const [workshop, setWorkshop] = useState('All')
+  const [workshopId, setWorkshopId] = useState(initialWorkshop)
   const [batch, setBatch] = useState('All')
   const [testId, setTestId] = useState('All')
 
@@ -41,28 +45,24 @@ export default function Statistics() {
   }
   useEffect(() => { reload() }, [])
 
-  // Workshop & Batch options
-  const workshopOptions = useMemo(() => {
-    if (!raw) return ['All']
-    return ['All', ...new Set([
-      ...raw.tests.map((t) => t.workshopName).filter(Boolean),
-      ...raw.students.map((s) => s.workshopName).filter(Boolean),
-    ])]
-  }, [raw])
+  const selectedWorkshop = useMemo(() => {
+    if (!raw || workshopId === 'All') return null
+    return (raw.workshops || []).find((w) => w.id === workshopId) || null
+  }, [raw, workshopId])
 
   const availableTests = useMemo(() => {
     if (!raw) return []
-    if (workshop === 'All') return raw.tests
-    return raw.tests.filter((t) => t.workshopName === workshop || (!t.workshopName && (workshop === 'General' || workshop === 'excel-analytics')))
-  }, [raw, workshop])
+    if (workshopId === 'All') return raw.tests
+    return raw.tests.filter((t) => t.workshopId === workshopId || (selectedWorkshop && t.workshopName === selectedWorkshop.name))
+  }, [raw, workshopId, selectedWorkshop])
 
-  // Recompute metrics for the selected workshop / batch / test filter.
+  // Recompute metrics strictly for the selected workshop / batch / test filter.
   const data = useMemo(() => {
     if (!raw) return null
-    const inWorkshop = (x) =>
-      workshop === 'All' ||
-      x.workshopName === workshop ||
-      (!x.workshopName && (workshop === 'General' || workshop === 'excel-analytics'))
+    const inWorkshop = (x) => {
+      if (workshopId === 'All') return true
+      return x.workshopId === workshopId || (selectedWorkshop && x.workshopName === selectedWorkshop.name)
+    }
     const inBatch = (x) => batch === 'All' || (x.batch || 'Unknown') === batch
     const inTest = (x) => testId === 'All' || x.testId === testId
 
@@ -71,8 +71,9 @@ export default function Statistics() {
       tests: raw.tests.filter((t) => inWorkshop(t) && inTest(t)),
       attempts: raw.attempts.filter((a) => inWorkshop(a) && inBatch(a) && inTest(a)),
       results: raw.results.filter((r) => inWorkshop(r) && inBatch(r) && inTest(r)),
+      selectedWorkshop,
     })
-  }, [raw, workshop, batch, testId])
+  }, [raw, workshopId, batch, testId, selectedWorkshop])
 
   if (error) return <Alert type="error">{error}</Alert>
   if (loading || !data) return <Loader message="Crunching statistics…" />
@@ -85,20 +86,32 @@ export default function Statistics() {
     <div>
       {/* ---- Toolbar (hidden when printing) ---- */}
       <div className="no-print mb-4 flex flex-wrap items-end justify-between gap-3">
-        <h1 className="text-2xl font-bold text-slate-800">Statistics &amp; Reports</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-slate-800">Statistics &amp; Reports</h1>
+          <p className="mt-0.5 text-xs text-slate-500">
+            {selectedWorkshop ? `Viewing ${selectedWorkshop.name}` : 'Viewing aggregate performance across all workshops'}
+          </p>
+        </div>
         <div className="flex flex-wrap items-end gap-3">
           <div>
             <label className="label">Workshop</label>
             <select
-              className="input"
-              value={workshop}
+              className="input font-medium"
+              value={workshopId}
               onChange={(e) => {
-                setWorkshop(e.target.value)
+                const wid = e.target.value
+                setWorkshopId(wid)
                 setTestId('All')
+                if (wid === 'All') searchParams.delete('workshopId')
+                else searchParams.set('workshopId', wid)
+                setSearchParams(searchParams)
               }}
             >
-              {workshopOptions.map((w) => (
-                <option key={w}>{w}</option>
+              <option value="All">All Workshops (Combined)</option>
+              {(raw.workshops || []).map((w) => (
+                <option key={w.id} value={w.id}>
+                  {w.name}
+                </option>
               ))}
             </select>
           </div>
@@ -120,11 +133,32 @@ export default function Statistics() {
         </div>
       </div>
 
+      {/* Workshop filter notice */}
+      {selectedWorkshop && (
+        <div className="no-print mb-4 flex items-center justify-between rounded-xl border border-brand/20 bg-brand/5 p-3 text-xs text-slate-700 sm:text-sm">
+          <div>
+            🎯 Isolated Statistics for: <strong className="text-brand font-semibold">{selectedWorkshop.name}</strong>
+            {selectedWorkshop.code && <span className="ml-2 badge bg-brand/10 text-brand font-mono">{selectedWorkshop.code}</span>}
+          </div>
+          <button
+            onClick={() => {
+              setWorkshopId('All')
+              setTestId('All')
+              searchParams.delete('workshopId')
+              setSearchParams(searchParams)
+            }}
+            className="text-xs font-semibold text-brand underline hover:text-brand-dark"
+          >
+            Clear Filter (Show All)
+          </button>
+        </div>
+      )}
+
       {/* ---- Printed report header (only visible when printing) ---- */}
       <div className="print-only mb-4 hidden">
         <h1 className="text-2xl font-bold text-slate-800">Assessment Statistics Report</h1>
         <p className="text-sm text-slate-600">
-          Workshop: <b>{workshop}</b> · Batch: <b>{batch}</b> · Test: <b>{activeTest}</b>
+          Workshop: <b>{selectedWorkshop ? selectedWorkshop.name : 'All Workshops'}</b> · Batch: <b>{batch}</b> · Test: <b>{activeTest}</b>
         </p>
       </div>
 
@@ -177,7 +211,7 @@ export default function Statistics() {
           </BarChart>
         </ChartCard>
 
-        <ChartCard title="Day-wise Test Progress (avg %)" note="Average score trend across the 6 day-wise tests.">
+        <ChartCard title="Day-wise Test Progress (avg %)" note="Average score trend across the day-wise tests.">
           <LineChart data={dayWise}>
             <XAxis dataKey="name" /><YAxis domain={[0, 100]} />
             <Tooltip />
